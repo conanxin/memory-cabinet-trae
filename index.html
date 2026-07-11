@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时光展柜 - 把长辈的口述变成微型人生展览</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-cream: #FAF7F2;
+            --bg-warm: #F5F0EB;
+            --text-brown: #2C1F16;
+            --text-medium: #4A3F35;
+            --text-light: #6B5B4F;
+            --accent-red: #8B3A3A;
+            --accent-gold: #A0522D;
+            --border-light: #D4C5B5;
+            --border-warm: #C4B5A5;
+            --card-bg: #FFFFFF;
+            --timeline-dot: #A0522D;
+        }
+
+        body {
+            font-family: "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
+            background-color: var(--bg-cream);
+            color: var(--text-brown);
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== SVG Icons ===== */
+        .icon-svg {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+        .icon-svg svg {
+            width: 100%;
+            height: 100%;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .icon-svg.lg { width: 28px; height: 28px; }
+        .icon-svg.xl { width: 48px; height: 48px; }
+
+        /* ===== Header ===== */
+        .site-header {
+            text-align: center;
+            padding: 20px 20px 14px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .site-header h1 {
+            font-size: 1.7rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            color: var(--text-brown);
+            margin-bottom: 4px;
+        }
+        .site-header .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-medium);
+            letter-spacing: 0.03em;
+        }
+
+        /* ===== Input Page Layout ===== */
+        .input-page {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== Split Layout ===== */
+        .split-container {
+            width: min(1320px, calc(100vw - 80px));
+            margin: auto;
+            padding: 16px 0 32px;
+            display: flex;
+            gap: 36px;
+            align-items: stretch;
+        }
+
+        .archive-panel, .preview-panel {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .preview-panel .preview-card { flex: 1; }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .panel-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: var(--text-medium);
+            text-transform: uppercase;
+        }
+        .panel-label .icon-svg { color: var(--accent-gold); }
+
+        /* ===== Record Card ===== */
+        .record-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 4px rgba(44,31,22,0.04);
+        }
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 14px;
+            background: var(--bg-warm);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .record-badge {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--accent-red);
+            letter-spacing: 0.05em;
+            border: 1px solid var(--accent-red);
+            padding: 2px 8px;
+            border-radius: 2px;
+        }
+        .record-id {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            font-family: "Courier New", monospace;
+            letter-spacing: 0.05em;
+        }
+        .record-card textarea {
+            width: 100%;
+            min-height: 140px;
+            padding: 14px;
+            border: none;
+            font-family: inherit;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            resize: vertical;
+            background: transparent;
+            color: var(--text-brown);
+        }
+        .record-card textarea:focus {
+            outline: none;
+        }
+        .record-card textarea::placeholder {
+            color: #B0A090;
+            font-style: italic;
+        }
+
+        /* ===== Photo Stack ===== */
+        .photo-stack {
+            position: relative;
+            height: 110px;
+            margin-bottom: 16px;
+        }
+        .stack-card {
+            position: absolute;
+            width: 120px;
+            height: 90px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 6px rgba(44,31,22,0.08);
+        }
+        .stack-card:hover {
+            transform: translateY(-4px) rotate(0deg) scale(1.05);
+            z-index: 10;
+            border-color: var(--accent-gold);
+        }
+        .stack-card:nth-child(1) { left: 0; top: 10px; transform: rotate(-4deg); z-index: 1; }
+        .stack-card:nth-child(2) { left: 90px; top: 4px; transform: rotate(1deg); z-index: 2; }
+        .stack-card:nth-child(3) { left: 180px; top: 8px; transform: rotate(5deg); z-index: 3; }
+        .stack-card .stack-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-warm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-medium);
+        }
+        .stack-card .stack-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        .stack-card.has-photo {
+            border-color: var(--accent-gold);
+            background: var(--bg-warm);
+        }
+        .stack-card.has-photo .stack-icon {
+            background: var(--accent-gold);
+            color: white;
+        }
+
+        /* ===== Privacy Bar ===== */
+        .privacy-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .privacy-bar-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-right: 4px;
+        }
+        .privacy-pill {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 5px 12px;
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            background: var(--card-bg);
+            color: var(--text-medium);
+        }
+        .privacy-pill:hover { border-color: var(--accent-gold); }
+        .privacy-pill.selected {
+            border-color: var(--accent-red);
+            background: rgba(139,58,58,0.06);
+            color: var(--accent-red);
+        }
+        .privacy-pill input { accent-color: var(--accent-red); }
+
+        /* ===== Buttons ===== */
+        .btn-primary {
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-family: inherit;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.05em;
+            width: 100%;
+        }
+        .btn-primary:hover {
+            background: #6B2A2A;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139,58,58,0.25);
+        }
+        .btn-primary:disabled {
+            background: var(--border-warm);
+            color: var(--text-light);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            background: transparent;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 12px 16px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            margin-top: 14px;
+        }
+        .btn-secondary:hover {
+            background: rgba(160,82,45,0.08);
+            transform: translateY(-1px);
+        }
+        .btn-secondary:disabled {
+            border-color: var(--border-warm);
+            color: var(--text-light);
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-secondary-main {
+            display: block;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 2px;
+        }
+        .btn-secondary-hint {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--text-light);
+        }
+
+        /* ===== Preview Panel ===== */
+        .preview-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(44,31,22,0.06);
+        }
+        .preview-tag {
+            display: inline-block;
+            border: 1px solid var(--border-warm);
+            padding: 3px 12px;
+            font-size: 0.7rem;
+            color: var(--text-light);
+            letter-spacing: 0.08em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .preview-card h3 {
+            font-size: 1.45rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-brown);
+        }
+        .preview-lead {
+            font-size: 1rem;
+            color: var(--text-medium);
+            font-style: italic;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .preview-timeline {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 18px;
+            padding: 10px 0;
+        }
+        .p-node {
+            text-align: center;
+            flex: 1;
+        }
+        .p-year {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--accent-red);
+            margin-bottom: 2px;
+        }
+        .p-event {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+        .p-line {
+            width: 24px;
+            height: 2px;
+            background: var(--border-warm);
+            flex-shrink: 0;
+        }
+        .preview-artifact {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-cream);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            margin-bottom: 14px;
+        }
+        .p-artifact-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 4px;
+            background: var(--bg-warm);
+            border: 1px solid var(--border-warm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--accent-gold);
+            flex-shrink: 0;
+        }
+        .p-artifact-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-brown);
+        }
+        .p-artifact-desc {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        .preview-quote {
+            border-left: 2px solid var(--accent-red);
+            padding: 8px 12px;
+            background: var(--bg-warm);
+            font-style: italic;
+            font-size: 0.85rem;
+            color: var(--text-medium);
+            line-height: 1.6;
+            position: relative;
+        }
+        .preview-quote::before {
+            content: """;
+            font-size: 2rem;
+            color: var(--border-warm);
+            position: absolute;
+            left: 4px;
+            top: -6px;
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        /* ===== Convert Hint ===== */
+        .convert-hint {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 4px;
+            color: var(--text-light);
+            font-size: 0.72rem;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .convert-hint .hint-line {
+            width: 1px;
+            height: 24px;
+            background: var(--border-light);
+        }
+        .convert-hint .icon-svg {
+            width: 14px;
+            height: 14px;
+            color: var(--border-warm);
+        }
+
+        /* ===== Exhibition Result ===== */
+        .exhibition-result {
+            display: none;
+            animation: fadeIn 0.8s ease;
+        }
+        .exhibition-result.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .exhibition-header {
+            text-align: center;
+            padding: 40px 20px 28px;
+            border-bottom: 2px solid var(--border-light);
+            margin-bottom: 32px;
+            position: relative;
+        }
+        .exhibition-header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--accent-red);
+        }
+        .exhibition-tag {
+            display: inline-block;
+            border: 1px solid var(--border-warm);
+            padding: 5px 16px;
+            font-size: 0.75rem;
+            color: var(--text-medium);
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+        }
+        .exhibition-title {
+            font-size: 1.7rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.04em;
+        }
+        .exhibition-subtitle {
+            font-size: 1rem;
+            color: var(--text-medium);
+            font-style: italic;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        .exhibition-meta {
+            margin-top: 16px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .exhibit-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(44,31,22,0.04);
+        }
+        .exhibit-card .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-brown);
+        }
+        .card-title .icon-svg { color: var(--accent-gold); }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: var(--border-warm);
+        }
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+        .timeline-item:last-child { padding-bottom: 0; }
+        .timeline-dot {
+            position: absolute;
+            left: -22px;
+            top: 4px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--timeline-dot);
+            border: 2px solid var(--card-bg);
+            box-shadow: 0 0 0 2px var(--timeline-dot);
+        }
+        .timeline-year {
+            font-weight: 600;
+            color: var(--accent-red);
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+        }
+        .timeline-event {
+            color: var(--text-medium);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Route Map */
+        .route-map {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 16px 0;
+        }
+        .route-point { text-align: center; }
+        .route-point .point-marker {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg-warm);
+            border: 2px solid var(--accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 6px;
+            color: var(--accent-gold);
+        }
+        .route-point .point-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-brown);
+        }
+        .route-point .point-detail {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        .route-arrow {
+            color: var(--border-warm);
+            display: flex;
+            align-items: center;
+        }
+
+        /* People */
+        .people-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+        }
+        .person-card {
+            text-align: center;
+            padding: 14px 16px;
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            min-width: 90px;
+            background: var(--bg-cream);
+        }
+        .person-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--bg-warm);
+            border: 2px solid var(--border-warm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-medium);
+            margin: 0 auto 8px;
+        }
+        .person-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-brown);
+        }
+        .person-relation {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        .person-card.central .person-avatar {
+            border-color: var(--accent-red);
+            background: rgba(139,58,58,0.08);
+            color: var(--accent-red);
+        }
+
+        /* Artifact */
+        .artifact-showcase {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        .artifact-image {
+            width: 140px;
+            height: 140px;
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            background: var(--bg-warm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--accent-gold);
+            flex-shrink: 0;
+        }
+        .artifact-info {
+            flex: 1;
+            min-width: 200px;
+        }
+        .artifact-name {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-brown);
+        }
+        .artifact-story {
+            color: var(--text-medium);
+            line-height: 1.7;
+            font-size: 0.92rem;
+        }
+
+        /* Quote */
+        .quote-block {
+            border-left: 3px solid var(--accent-red);
+            padding: 14px 20px;
+            background: var(--bg-warm);
+            font-style: italic;
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--text-brown);
+            position: relative;
+        }
+        .quote-block::before {
+            content: """;
+            font-size: 2.8rem;
+            color: var(--border-warm);
+            position: absolute;
+            left: 6px;
+            top: -6px;
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+        .quote-source {
+            margin-top: 10px;
+            font-size: 0.82rem;
+            color: var(--text-light);
+            font-style: normal;
+        }
+
+        /* Questions */
+        .questions-list { list-style: none; }
+        .questions-list li {
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            background: var(--bg-cream);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            transition: all 0.3s;
+        }
+        .questions-list li:hover {
+            border-color: var(--accent-gold);
+            background: var(--bg-warm);
+        }
+        .q-num {
+            background: var(--accent-gold);
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-family: sans-serif;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .q-text {
+            flex: 1;
+            font-size: 0.92rem;
+            color: var(--text-medium);
+        }
+
+        /* Back */
+        .back-area {
+            text-align: center;
+            padding: 16px 0 48px;
+        }
+        .btn-back {
+            background: transparent;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 12px 24px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-back:hover {
+            background: rgba(160,82,45,0.08);
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: 24px 20px;
+            border-top: 1px solid var(--border-light);
+            font-size: 0.78rem;
+            color: #B0A090;
+        }
+
+        /* Hide input when showing result */
+        .input-page.hidden { display: none; }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 900px) {
+            .split-container {
+                flex-direction: column;
+                width: calc(100vw - 32px);
+                padding: 16px 0 24px;
+                gap: 20px;
+            }
+            .convert-hint { display: none; }
+            .photo-stack { height: auto; display: flex; gap: 12px; }
+            .stack-card {
+                position: relative !important;
+                left: auto !important;
+                top: auto !important;
+                transform: none !important;
+                width: 100px;
+                height: 80px;
+            }
+            .site-header h1 { font-size: 1.5rem; }
+        }
+        @media (max-width: 600px) {
+            .artifact-showcase { flex-direction: column; align-items: center; }
+            .preview-timeline { flex-wrap: wrap; }
+            .p-line { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== SVG Icon Library ===== -->
+<svg style="display:none">
+    <symbol id="icon-doc" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+    <symbol id="icon-map" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 21 18 21 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></symbol>
+    <symbol id="icon-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+    <symbol id="icon-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="icon-box" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></symbol>
+    <symbol id="icon-message" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></symbol>
+    <symbol id="icon-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+    <symbol id="icon-home" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+    <symbol id="icon-building" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V7l8-4 8 4v14"/><path d="M9 21v-6h6v6"/></symbol>
+    <symbol id="icon-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+</svg>
+
+<!-- ===== Header ===== -->
+<header class="site-header">
+    <h1>时光展柜</h1>
+    <p class="subtitle">把长辈的一段口述，变成一座可以浏览的微型人生展览</p>
+</header>
+
+<!-- ===== Input Page ===== -->
+<div class="input-page" id="inputPage">
+    <div class="split-container">
+        <!-- Left: Archive Panel -->
+        <div class="archive-panel">
+            <div class="panel-header">
+                <span class="icon-svg"><svg><use href="#icon-doc"/></svg></span>
+                <span class="panel-label">原始家庭档案</span>
+            </div>
+
+            <div class="record-card">
+                <div class="record-header">
+                    <span class="record-badge">口述记录</span>
+                    <span class="record-id">NO. 2026-001</span>
+                </div>
+                <textarea id="oralText" placeholder="粘贴长辈的口述记录，或写下你记得的片段..." oninput="checkInputLength()"></textarea>
+            </div>
+
+            <div class="photo-stack">
+                <div class="stack-card" id="slotPerson" onclick="selectPhoto('person')">
+                    <div class="stack-icon">
+                        <span class="icon-svg lg"><svg><use href="#icon-user"/></svg></span>
+                    </div>
+                    <div class="stack-label">人物</div>
+                </div>
+                <div class="stack-card" id="slotPlace" onclick="selectPhoto('place')">
+                    <div class="stack-icon">
+                        <span class="icon-svg lg"><svg><use href="#icon-home"/></svg></span>
+                    </div>
+                    <div class="stack-label">地点</div>
+                </div>
+                <div class="stack-card" id="slotObject" onclick="selectPhoto('object')">
+                    <div class="stack-icon">
+                        <span class="icon-svg lg"><svg><use href="#icon-box"/></svg></span>
+                    </div>
+                    <div class="stack-label">旧物</div>
+                </div>
+            </div>
+
+            <div class="privacy-bar">
+                <span class="privacy-bar-label">展览可见</span>
+                <label class="privacy-pill selected" onclick="selectPrivacy(this, 'private')">
+                    <input type="radio" name="privacy" value="private" checked>
+                    <span>仅自己</span>
+                </label>
+                <label class="privacy-pill" onclick="selectPrivacy(this, 'family')">
+                    <input type="radio" name="privacy" value="family">
+                    <span>仅家人</span>
+                </label>
+                <label class="privacy-pill" onclick="selectPrivacy(this, 'public')">
+                    <input type="radio" name="privacy" value="public">
+                    <span>可公开</span>
+                </label>
+            </div>
+
+            <button class="btn-secondary" id="btnGenerate" onclick="generateExhibition()" disabled>
+                <span class="btn-secondary-main">把这段人生做成展览</span>
+                <span class="btn-secondary-hint">输入 20 字以上即可生成</span>
+            </button>
+        </div>
+
+        <!-- Convert Hint -->
+        <div class="convert-hint">
+            <span>口述材料</span>
+            <div class="hint-line"></div>
+            <span class="icon-svg"><svg><use href="#icon-arrow"/></svg></span>
+            <span>策展生成</span>
+            <div class="hint-line"></div>
+            <span class="icon-svg"><svg><use href="#icon-arrow"/></svg></span>
+            <span>人生展览</span>
+        </div>
+
+        <!-- Right: Preview Panel -->
+        <div class="preview-panel">
+            <div class="panel-header">
+                <span class="icon-svg"><svg><use href="#icon-building"/></svg></span>
+                <span class="panel-label">微型人生展览预览</span>
+            </div>
+
+            <div class="preview-card">
+                <div class="preview-tag">微型人生展览</div>
+                <h3>王秀兰的人生展</h3>
+                <p class="preview-lead">一台缝纫机缝过的六十年时光</p>
+
+                <div class="preview-timeline">
+                    <div class="p-node">
+                        <span class="p-year">1928</span>
+                        <span class="p-event">出生于扬州裁缝铺</span>
+                    </div>
+                    <div class="p-line"></div>
+                    <div class="p-node">
+                        <span class="p-year">1950</span>
+                        <span class="p-event">嫁到南京</span>
+                    </div>
+                    <div class="p-line"></div>
+                    <div class="p-node">
+                        <span class="p-year">2015</span>
+                        <span class="p-event">安详离世</span>
+                    </div>
+                </div>
+
+                <div class="preview-artifact">
+                    <div class="p-artifact-icon">缝</div>
+                    <div>
+                        <div class="p-artifact-name">蝴蝶牌缝纫机</div>
+                        <div class="p-artifact-desc">陪伴六十年的嫁妆</div>
+                    </div>
+                </div>
+
+                <div class="preview-quote">那台缝纫机她用了六十年，给我妈做嫁衣，给我做校服...</div>
+
+                <button class="btn-primary" onclick="loadDemoCase()">
+                    <span class="btn-secondary-main">先看看《外婆的缝纫机》</span>
+                    <span class="btn-secondary-hint">30 秒体验完整生成过程</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Exhibition Result Page ===== -->
+<div class="exhibition-result" id="exhibitionResult">
+    <div class="container">
+        <div class="exhibition-header">
+            <div class="exhibition-tag">微型人生展览</div>
+            <h2 class="exhibition-title" id="exTitle">王秀兰的人生展</h2>
+            <p class="exhibition-subtitle" id="exSubtitle">一台缝纫机缝过的六十年时光</p>
+            <div class="exhibition-meta" id="exMeta">策展于 2026年7月</div>
+        </div>
+
+        <div class="exhibit-card">
+            <div class="card-title">
+                <span class="icon-svg"><svg><use href="#icon-calendar"/></svg></span>
+                人生时间线
+            </div>
+            <div class="timeline" id="timelineContainer"></div>
+        </div>
+
+        <div class="exhibit-card">
+            <div class="card-title">
+                <span class="icon-svg"><svg><use href="#icon-map"/></svg></span>
+                记忆地点
+            </div>
+            <div class="route-map" id="routeMapContainer"></div>
+        </div>
+
+        <div class="exhibit-card">
+            <div class="card-title">
+                <span class="icon-svg"><svg><use href="#icon-users"/></svg></span>
+                重要人物
+            </div>
+            <div class="people-grid" id="peopleContainer"></div>
+        </div>
+
+        <div class="exhibit-card">
+            <div class="card-title">
+                <span class="icon-svg"><svg><use href="#icon-box"/></svg></span>
+                一件有故事的旧物
+            </div>
+            <div class="artifact-showcase">
+                <div class="artifact-image" id="artifactImage">缝</div>
+                <div class="artifact-info">
+                    <div class="artifact-name" id="artifactName">蝴蝶牌缝纫机</div>
+                    <div class="artifact-story" id="artifactStory">1950年作为嫁妆从扬州带到南京，陪伴了主人六十年的光阴。</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exhibit-card">
+            <div class="card-title">
+                <span class="icon-svg"><svg><use href="#icon-message"/></svg></span>
+                原话摘录
+            </div>
+            <div class="quote-block" id="quoteBlock">
+                <div id="quoteText"></div>
+                <div class="quote-source" id="quoteSource">—— 摘自口述记录</div>
+            </div>
+        </div>
+
+        <div class="exhibit-card">
+            <div class="card-title">
+                <span class="icon-svg"><svg><use href="#icon-help"/></svg></span>
+                下一次访谈的追问
+            </div>
+            <ul class="questions-list" id="questionsContainer"></ul>
+        </div>
+
+        <div class="back-area">
+            <button class="btn-back" onclick="backToInput()">返回，制作另一座展览</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Footer ===== -->
+<footer class="site-footer">
+    <p>时光展柜 · 让每一段人生都值得被展览</p>
+</footer>
+
+<script>
+    // ===== State =====
+    let currentPrivacy = 'private';
+    let photos = { person: false, place: false, object: false };
+
+    // ===== SVG Icon Helpers =====
+    const svgIcons = {
+        user: '<span class="icon-svg"><svg><use href="#icon-user"/></svg></span>',
+        users: '<span class="icon-svg"><svg><use href="#icon-users"/></svg></span>',
+        home: '<span class="icon-svg"><svg><use href="#icon-home"/></svg></span>',
+        pin: '<span class="icon-svg"><svg><use href="#icon-pin"/></svg></span>',
+        arrow: '<span class="icon-svg"><svg><use href="#icon-arrow"/></svg></span>',
+        check: '<span class="icon-svg"><svg><use href="#icon-check"/></svg></span>'
+    };
+
+    // ===== Demo Data =====
+    const demoData = {
+        title: "王秀兰的人生展",
+        subtitle: "一台缝纫机缝过的六十年时光",
+        subjectName: "王秀兰",
+        timeline: [
+            { year: "1928年", event: "出生于江苏扬州的一个小裁缝铺，从小在布料和针线间长大。" },
+            { year: "1940年代", event: "跟着父亲学裁缝，十几岁就能独立做出一件完整的旗袍。" },
+            { year: "1950年", event: "嫁到南京，带了一台蝴蝶牌缝纫机作为嫁妆，开启了新生活。" },
+            { year: "1950-2010", event: "六十年间，用这台缝纫机为女儿做嫁衣，为外孙做校服，为外孙女做舞蹈服。" },
+            { year: "2010年", event: "眼睛看不见了，依然摸着缝纫机哭了一场，那是她一生最忠实的伙伴。" },
+            { year: "2015年", event: "安详离世，那台蝴蝶牌缝纫机至今保存在舅舅家的阁楼上。" }
+        ],
+        locations: [
+            { name: "江苏扬州", detail: "出生地与裁缝铺", icon: "扬" },
+            { name: "南京", detail: "成家与生活六十载", icon: "宁" }
+        ],
+        people: [
+            { name: "王秀兰", relation: "主角·外婆", central: true, label: "外婆" },
+            { name: "父亲", relation: "裁缝师傅", central: false, label: "父亲" },
+            { name: "母亲", relation: "女儿", central: false, label: "母亲" },
+            { name: "叙述者", relation: "外孙", central: false, label: "外孙" },
+            { name: "表妹", relation: "外孙女", central: false, label: "表妹" },
+            { name: "舅舅", relation: "儿子", central: false, label: "舅舅" }
+        ],
+        artifact: {
+            name: "蝴蝶牌缝纫机",
+            icon: "缝",
+            story: "1950年作为嫁妆从扬州带到南京，陪伴了主人六十年的光阴。从嫁衣到校服，从舞蹈服到最后的泪水，这台机器见证了四代人的成长与离别。2015年后，它被珍藏在阁楼，成为家族记忆的实体锚点。"
+        },
+        quote: {
+            text: "那台缝纫机她用了六十年，给我妈做嫁衣，给我做校服，给我表妹做舞蹈服。2010年眼睛看不见了，她还摸着缝纫机哭了一场。",
+            source: "—— 摘自口述记录"
+        },
+        questions: [
+            "那台蝴蝶牌缝纫机现在还能运转吗？您还记得它发出的'嗒嗒'声吗？",
+            "外婆做的第一件旗袍是什么颜色？谁曾经穿过它？",
+            "除了缝纫机，老裁缝铺里还有什么工具或气味让您至今记得？"
+        ]
+    };
+
+    // ===== Generic Generation Data =====
+    function generateGenericData(text) {
+        const lines = text.trim().split(/[。！？\n]+/).filter(l => l.trim().length > 0);
+        const firstLine = lines[0] || "";
+        const nameMatch = firstLine.match(/([\u4e00-\u9fa5]{2,4})(?=叫|是|奶奶|外婆|爷爷|外公|父亲|母亲)/);
+        const name = nameMatch ? nameMatch[1] : "长辈";
+        const yearMatches = text.match(/(\d{4})年/g) || [];
+        const years = [...new Set(yearMatches)].slice(0, 6);
+        const locationMatches = text.match(/([\u4e00-\u9fa5]{2,6}(?:省|市|县|镇|村|街|胡同))/g) || [];
+        const locations = [...new Set(locationMatches)].slice(0, 3);
+        const timeline = years.length > 0 
+            ? years.map((y, i) => ({
+                year: y,
+                event: lines[i] ? lines[i].trim().substring(0, 60) + "..." : "人生的重要一年"
+            }))
+            : [
+                { year: "过去", event: "回忆的起点" },
+                { year: "如今", event: "口述被记录下来的时刻" }
+            ];
+        const locs = locations.length > 0
+            ? locations.map(l => ({ name: l, detail: "记忆中的地方", icon: l.charAt(0) }))
+            : [{ name: "故乡", detail: "梦开始的地方", icon: "故" }];
+        return {
+            title: `${name}的人生展`,
+            subtitle: "一段值得被展览的人生记忆",
+            subjectName: name,
+            timeline: timeline,
+            locations: locs,
+            people: [
+                { name: name, relation: "主角", central: true, label: "主角" },
+                { name: "家人", relation: "至亲", central: false, label: "家人" }
+            ],
+            artifact: {
+                name: "承载记忆的旧物",
+                icon: "物",
+                story: "在这段口述中，一定有一件物品承载着最深的情感。它可能是一件家具、一件首饰，或是一份手稿。"
+            },
+            quote: {
+                text: lines[0] ? lines[0].trim().substring(0, 100) + "..." : "原话摘录",
+                source: "—— 摘自口述记录"
+            },
+            questions: [
+                "您能再详细说说当时的情景吗？",
+                "那段时光里，还有什么人或物让您印象深刻？",
+                "如果回到那个时候，您最想对当时的自己说什么？"
+            ]
+        };
+    }
+
+    // ===== Input Check =====
+    function checkInputLength() {
+        const text = document.getElementById('oralText').value;
+        const btn = document.getElementById('btnGenerate');
+        const hint = btn.querySelector('.btn-secondary-hint');
+        const count = text.replace(/\s/g, '').length;
+        if (count >= 20) {
+            btn.disabled = false;
+            hint.textContent = '点击生成您的微型人生展览';
+        } else {
+            btn.disabled = true;
+            hint.textContent = `还需 ${20 - count} 个汉字即可生成`;
+        }
+    }
+
+    // ===== UI Functions =====
+    function selectPrivacy(el, value) {
+        document.querySelectorAll('.privacy-pill').forEach(o => o.classList.remove('selected'));
+        el.classList.add('selected');
+        el.querySelector('input').checked = true;
+        currentPrivacy = value;
+    }
+
+    function selectPhoto(type) {
+        photos[type] = !photos[type];
+        const slot = document.getElementById('slot' + type.charAt(0).toUpperCase() + type.slice(1));
+        const labelEl = slot.querySelector('.stack-label');
+        if (photos[type]) {
+            slot.classList.add('has-photo');
+            labelEl.textContent = { person: '人物已选', place: '地点已选', object: '旧物已选' }[type];
+        } else {
+            slot.classList.remove('has-photo');
+            labelEl.textContent = { person: '人物', place: '地点', object: '旧物' }[type];
+        }
+    }
+
+    function loadDemoCase() {
+        document.getElementById('oralText').value = 
+            "我外婆叫王秀兰，1928年出生在江苏扬州的一个小裁缝铺里。她从小跟着她父亲学裁缝，十几岁就能独立做一件旗袍了。" +
+            "1950年她嫁到南京，带了一台蝴蝶牌缝纫机当嫁妆。那台缝纫机她用了六十年，给我妈做嫁衣，给我做校服，给我表妹做舞蹈服。" +
+            "2010年眼睛看不见了，她还摸着缝纫机哭了一场。2015年她走了，那台缝纫机还在我舅舅家的阁楼上。";
+        photos = { person: true, place: false, object: true };
+        ['person', 'place', 'object'].forEach(t => {
+            const slot = document.getElementById('slot' + t.charAt(0).toUpperCase() + t.slice(1));
+            const labelEl = slot.querySelector('.stack-label');
+            if (photos[t]) {
+                slot.classList.add('has-photo');
+                labelEl.textContent = { person: '人物已选', place: '地点已选', object: '旧物已选' }[t];
+            } else {
+                slot.classList.remove('has-photo');
+                labelEl.textContent = { person: '人物', place: '地点', object: '旧物' }[t];
+            }
+        });
+        // Auto-generate after short delay for visual feedback
+        setTimeout(() => generateExhibition(), 300);
+    }
+
+    function generateExhibition() {
+        const text = document.getElementById('oralText').value.trim();
+        if (!text || text.replace(/\s/g, '').length < 20) {
+            alert('请先输入至少 20 个汉字的口述记录');
+            return;
+        }
+        const isDemo = text.includes('王秀兰') && text.includes('缝纫机');
+        const data = isDemo ? demoData : generateGenericData(text);
+        renderExhibition(data);
+        document.getElementById('inputPage').classList.add('hidden');
+        document.getElementById('exhibitionResult').classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    function renderExhibition(data) {
+        document.getElementById('exTitle').textContent = data.title;
+        document.getElementById('exSubtitle').textContent = data.subtitle;
+        const privacyLabels = { private: '仅自己', family: '仅家人', public: '可公开' };
+        document.getElementById('exMeta').textContent = 
+            `策展于 ${new Date().getFullYear()}年${new Date().getMonth()+1}月 · 隐私范围：${privacyLabels[currentPrivacy]}`;
+
+        document.getElementById('timelineContainer').innerHTML = data.timeline.map(item => `
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-year">${item.year}</div>
+                <div class="timeline-event">${item.event}</div>
+            </div>
+        `).join('');
+
+        document.getElementById('routeMapContainer').innerHTML = data.locations.map((loc, i) => `
+            <div class="route-point">
+                <div class="point-marker">${loc.icon}</div>
+                <div class="point-name">${loc.name}</div>
+                <div class="point-detail">${loc.detail}</div>
+            </div>
+            ${i < data.locations.length - 1 ? `<div class="route-arrow">${svgIcons.arrow}</div>` : ''}
+        `).join('');
+
+        document.getElementById('peopleContainer').innerHTML = data.people.map(p => `
+            <div class="person-card ${p.central ? 'central' : ''}">
+                <div class="person-avatar">${p.label}</div>
+                <div class="person-name">${p.name}</div>
+                <div class="person-relation">${p.relation}</div>
+            </div>
+        `).join('');
+
+        document.getElementById('artifactImage').textContent = data.artifact.icon;
+        document.getElementById('artifactName').textContent = data.artifact.name;
+        document.getElementById('artifactStory').textContent = data.artifact.story;
+
+        document.getElementById('quoteText').textContent = data.quote.text;
+        document.getElementById('quoteSource').textContent = data.quote.source;
+
+        document.getElementById('questionsContainer').innerHTML = data.questions.map((q, i) => `
+            <li>
+                <span class="q-num">${i + 1}</span>
+                <span class="q-text">${q}</span>
+            </li>
+        `).join('');
+    }
+
+    function backToInput() {
+        document.getElementById('inputPage').classList.remove('hidden');
+        document.getElementById('exhibitionResult').classList.remove('active');
+        window.scrollTo(0, 0);
+        checkInputLength();
+    }
+
+    // Init
+    checkInputLength();
+</script>
+</body>
+</html>
