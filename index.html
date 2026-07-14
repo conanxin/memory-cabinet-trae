@@ -794,6 +794,23 @@
         /* Hide input when showing result */
         .input-page.hidden { display: none; }
 
+        /* ===== Guide Link ===== */
+        .guide-link-row {
+            padding: 4px 14px 10px;
+            text-align: right;
+        }
+        .guide-link {
+            color: var(--text-light);
+            font-size: 0.78rem;
+            text-decoration: none;
+            border-bottom: 1px dashed var(--border-warm);
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .guide-link:hover {
+            color: var(--accent-gold);
+            border-color: var(--accent-gold);
+        }
+
         /* ===== Responsive ===== */
         @media (max-width: 900px) {
             .split-container {
@@ -863,6 +880,9 @@
                     <span class="record-id">NO. 2026-001</span>
                 </div>
                 <textarea id="oralText" placeholder="粘贴长辈的口述记录，或写下你记得的片段..." oninput="checkInputLength()"></textarea>
+                <div class="guide-link-row">
+                    <a href="guide.html" class="guide-link">不知道怎么开始？打开口述指南</a>
+                </div>
             </div>
 
             <div class="photo-stack">
@@ -1277,6 +1297,21 @@
 
     // Init
     checkInputLength();
+
+    // ===== Check for guide outline from localStorage =====
+    (function() {
+        try {
+            var starter = localStorage.getItem('memoryCabinetStarter');
+            if (starter) {
+                localStorage.removeItem('memoryCabinetStarter');
+                document.getElementById('oralText').value = starter;
+                checkInputLength();
+                setTimeout(function() {
+                    document.getElementById('oralText').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 200);
+            }
+        } catch(e) {}
+    })();
 </script>
 </body>
 </html>

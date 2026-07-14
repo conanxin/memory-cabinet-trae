@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时光展柜 · 口述指南</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-cream: #FAF7F2;
+            --bg-warm: #F5F0EB;
+            --text-brown: #2C1F16;
+            --text-medium: #4A3F35;
+            --text-light: #6B5B4F;
+            --accent-red: #8B3A3A;
+            --accent-gold: #A0522D;
+            --border-light: #D4C5B5;
+            --border-warm: #C4B5A5;
+            --card-bg: #FFFFFF;
+            --timeline-dot: #A0522D;
+        }
+
+        body {
+            font-family: "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
+            background-color: var(--bg-cream);
+            color: var(--text-brown);
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== Header ===== */
+        .site-header {
+            text-align: center;
+            padding: 20px 20px 14px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .site-header h1 {
+            font-size: 1.7rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            color: var(--text-brown);
+            margin-bottom: 4px;
+        }
+        .site-header .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-medium);
+            letter-spacing: 0.03em;
+        }
+
+        /* ===== Container ===== */
+        .guide-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        /* ===== Hero Title ===== */
+        .hero-title {
+            text-align: center;
+            padding: 48px 20px 36px;
+        }
+        .hero-title h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-brown);
+            letter-spacing: 0.04em;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .hero-title p {
+            font-size: 0.95rem;
+            color: var(--text-medium);
+            max-width: 520px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* ===== Section ===== */
+        .guide-section {
+            margin-bottom: 48px;
+        }
+        .section-label {
+            display: inline-block;
+            border: 1px solid var(--border-warm);
+            padding: 3px 14px;
+            font-size: 0.72rem;
+            color: var(--text-light);
+            letter-spacing: 0.08em;
+            margin-bottom: 14px;
+        }
+
+        /* ===== Starter Cards Grid ===== */
+        .starter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .starter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .starter-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            padding: 28px 24px 24px;
+            box-shadow: 0 2px 8px rgba(44,31,22,0.04);
+            display: flex;
+            flex-direction: column;
+        }
+        .starter-card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+        .card-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            font-family: "Georgia", serif;
+            flex-shrink: 0;
+        }
+        .starter-card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-brown);
+        }
+        .starter-card-desc {
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        .starter-outline {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+        .starter-outline li {
+            padding: 7px 0 7px 16px;
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            border-bottom: 1px solid var(--bg-warm);
+            position: relative;
+            line-height: 1.6;
+        }
+        .starter-outline li:last-child {
+            border-bottom: none;
+        }
+        .starter-outline li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border-warm);
+        }
+        .btn-use-outline {
+            display: block;
+            width: 100%;
+            padding: 11px 16px;
+            background: transparent;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            font-size: 0.875rem;
+            font-family: inherit;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            letter-spacing: 0.03em;
+        }
+        .btn-use-outline:hover {
+            background: rgba(160,82,45,0.08);
+            transform: translateY(-1px);
+        }
+
+        /* ===== Comparison Cards ===== */
+        .comparison-wrapper {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(44,31,22,0.04);
+            margin-bottom: 24px;
+        }
+        .comparison-item {
+            padding: 24px 28px;
+        }
+        .comparison-item.vague {
+            background: #EAE6E0;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .comparison-item.specific {
+            background: var(--bg-warm);
+            border-left: 3px solid var(--accent-red);
+        }
+        .comparison-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .comparison-text {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: var(--text-medium);
+        }
+        .comparison-text.specific-text {
+            color: var(--text-brown);
+            font-style: italic;
+        }
+
+        /* ===== Tips List ===== */
+        .tips-list {
+            list-style: none;
+            padding: 0;
+        }
+        .tips-list li {
+            padding: 14px 14px 14px 16px;
+            margin-bottom: 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            line-height: 1.7;
+            transition: all 0.3s;
+        }
+        .tips-list li:hover {
+            border-color: var(--accent-gold);
+            background: var(--bg-warm);
+        }
+        .tips-list li:last-child {
+            margin-bottom: 0;
+        }
+        .tip-num {
+            background: var(--accent-gold);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.78rem;
+            font-family: sans-serif;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ===== Good Oral Checklist ===== */
+        .oral-checklist {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            padding: 24px 28px;
+            margin-top: 24px;
+            box-shadow: 0 2px 8px rgba(44,31,22,0.04);
+        }
+        .oral-checklist-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-brown);
+            margin-bottom: 14px;
+        }
+        .oral-checklist ul {
+            list-style: none;
+            padding: 0;
+        }
+        .oral-checklist ul li {
+            padding: 6px 0 6px 20px;
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            position: relative;
+            line-height: 1.6;
+        }
+        .oral-checklist ul li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border: 2px solid var(--accent-gold);
+            border-radius: 50%;
+        }
+
+        /* ===== Privacy Notice ===== */
+        .privacy-notice {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-red);
+            border-left: 4px solid var(--accent-red);
+            border-radius: 4px;
+            padding: 24px 28px;
+            box-shadow: 0 2px 8px rgba(139,58,58,0.04);
+        }
+        .privacy-notice-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--accent-red);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .privacy-notice-title svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--accent-red);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+        .privacy-notice ul {
+            list-style: none;
+            padding: 0;
+        }
+        .privacy-notice ul li {
+            padding: 8px 0 8px 16px;
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            line-height: 1.7;
+            border-bottom: 1px solid var(--bg-warm);
+            position: relative;
+        }
+        .privacy-notice ul li:last-child {
+            border-bottom: none;
+        }
+        .privacy-notice ul li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-red);
+        }
+
+        /* ===== Back ===== */
+        .back-area {
+            text-align: center;
+            padding: 16px 0 48px;
+        }
+        .btn-back {
+            background: transparent;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 12px 24px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-back:hover {
+            background: rgba(160,82,45,0.08);
+        }
+
+        /* ===== Footer ===== */
+        .site-footer {
+            text-align: center;
+            padding: 24px 20px;
+            border-top: 1px solid var(--border-light);
+            font-size: 0.78rem;
+            color: #B0A090;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 900px) {
+            .site-header h1 { font-size: 1.5rem; }
+            .hero-title h2 { font-size: 1.25rem; }
+            .hero-title { padding: 32px 16px 28px; }
+            .comparison-item { padding: 18px 20px; }
+            .starter-card { padding: 22px 20px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== Header ===== -->
+<header class="site-header">
+    <h1>时光展柜</h1>
+    <p class="subtitle">口述指南</p>
+</header>
+
+<div class="guide-container">
+
+    <!-- ===== Hero Title ===== -->
+    <div class="hero-title">
+        <h2>不用讲完整的一生，从一个具体片段开始。</h2>
+        <p>选择一个容易回答的入口，先讲五分钟。真实的细节比完整的履历更重要。</p>
+    </div>
+
+    <!-- ===== 模块一：四种开始方式 ===== -->
+    <section class="guide-section">
+        <div class="section-label">四种开始方式</div>
+        <div class="starter-grid">
+
+            <!-- 卡片1：从一个人开始 -->
+            <div class="starter-card">
+                <div class="starter-card-header">
+                    <span class="card-number">1</span>
+                    <span class="starter-card-title">从一个人开始</span>
+                </div>
+                <p class="starter-card-desc">想起一个对你影响很深的人，不必先介绍完整关系，从第一次记得他或她的场景开始。</p>
+                <ul class="starter-outline">
+                    <li>这个人是谁？</li>
+                    <li>你第一次清楚地记得他或她，是什么时候？</li>
+                    <li>当时在什么地方？</li>
+                    <li>他或她经常说的一句话是什么？</li>
+                    <li>有哪一件小事最能代表这个人？</li>
+                    <li>你现在最想再问他或她什么？</li>
+                </ul>
+                <button class="btn-use-outline" onclick="useOutline('person')">用这个提纲开始</button>
+            </div>
+
+            <!-- 卡片2：从一个地方开始 -->
+            <div class="starter-card">
+                <div class="starter-card-header">
+                    <span class="card-number">2</span>
+                    <span class="starter-card-title">从一个地方开始</span>
+                </div>
+                <p class="starter-card-desc">从老家、学校、工厂、院子、车站或一间房子开始。</p>
+                <ul class="starter-outline">
+                    <li>这是哪里？</li>
+                    <li>你什么时候生活或到过那里？</li>
+                    <li>那里的声音、气味和光线是什么样的？</li>
+                    <li>哪些人经常在那里出现？</li>
+                    <li>在那里发生过什么难忘的事情？</li>
+                    <li>这个地方后来发生了什么变化？</li>
+                </ul>
+                <button class="btn-use-outline" onclick="useOutline('place')">用这个提纲开始</button>
+            </div>
+
+            <!-- 卡片3：从一件旧物开始 -->
+            <div class="starter-card">
+                <div class="starter-card-header">
+                    <span class="card-number">3</span>
+                    <span class="starter-card-title">从一件旧物开始</span>
+                </div>
+                <p class="starter-card-desc">从照片、衣服、缝纫机、信件、车票、工具或家具开始。</p>
+                <ul class="starter-outline">
+                    <li>这件东西是什么？</li>
+                    <li>它原来属于谁？</li>
+                    <li>你第一次记得它是在什么时候？</li>
+                    <li>与它有关的一件具体事情是什么？</li>
+                    <li>当时还有谁在场？</li>
+                    <li>它后来去了哪里？</li>
+                    <li>现在看到它，你最先想到什么？</li>
+                </ul>
+                <button class="btn-use-outline" onclick="useOutline('object')">用这个提纲开始</button>
+            </div>
+
+            <!-- 卡片4：从一个难忘时刻开始 -->
+            <div class="starter-card">
+                <div class="starter-card-header">
+                    <span class="card-number">4</span>
+                    <span class="starter-card-title">从一个难忘时刻开始</span>
+                </div>
+                <p class="starter-card-desc">从第一次离家、一次搬迁、一场婚礼、一份工作或一次告别开始。</p>
+                <ul class="starter-outline">
+                    <li>事情发生在哪一年？</li>
+                    <li>当时你在哪里？</li>
+                    <li>为什么会发生这件事？</li>
+                    <li>当时有哪些人在场？</li>
+                    <li>你最清楚地记得哪个细节？</li>
+                    <li>当时你是什么感受？</li>
+                    <li>这件事后来怎样影响了你？</li>
+                </ul>
+                <button class="btn-use-outline" onclick="useOutline('moment')">用这个提纲开始</button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ===== 模块二：怎样讲得更具体 ===== -->
+    <section class="guide-section">
+        <div class="section-label">怎样讲得更具体</div>
+
+        <div class="comparison-wrapper">
+            <div class="comparison-item vague">
+                <div class="comparison-label">模糊的讲法</div>
+                <div class="comparison-text">外婆以前是裁缝，对我们很好。</div>
+            </div>
+            <div class="comparison-item specific">
+                <div class="comparison-label">具体的讲法</div>
+                <div class="comparison-text specific-text">我上小学时，每到开学前，外婆都会坐在窗边的缝纫机前给我改校服。机器踏板发出的嗒嗒声，我到现在还记得。</div>
+            </div>
+        </div>
+
+        <div class="oral-checklist">
+            <div class="oral-checklist-title">好的口述不一定很长，但最好包含：</div>
+            <ul>
+                <li>一个时间</li>
+                <li>一个具体地点</li>
+                <li>一个在场的人</li>
+                <li>一件看得见或摸得到的东西</li>
+                <li>一个动作或声音</li>
+                <li>当时的感受</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===== 模块三：采访长辈的小技巧 ===== -->
+    <section class="guide-section">
+        <div class="section-label">采访长辈的小技巧</div>
+        <ol class="tips-list">
+            <li>
+                <span class="tip-num">1</span>
+                <span>先问容易回答的问题，不要一开始就问"请讲讲你的一生"。</span>
+            </li>
+            <li>
+                <span class="tip-num">2</span>
+                <span>一次只问一个问题。</span>
+            </li>
+            <li>
+                <span class="tip-num">3</span>
+                <span>少打断，让讲述者按自己的顺序回忆。</span>
+            </li>
+            <li>
+                <span class="tip-num">4</span>
+                <span>遇到具体人物、地方和物件时，再追问细节。</span>
+            </li>
+            <li>
+                <span class="tip-num">5</span>
+                <span>年份记不清没有关系，可以先记录"大约在什么时候"。</span>
+            </li>
+            <li>
+                <span class="tip-num">6</span>
+                <span>不要替讲述者改写感受。</span>
+            </li>
+            <li>
+                <span class="tip-num">7</span>
+                <span>公开前再次确认涉及他人的内容是否适合展示。</span>
+            </li>
+        </ol>
+    </section>
+
+    <!-- ===== 模块四：隐私提醒 ===== -->
+    <section class="guide-section">
+        <div class="section-label">隐私提醒</div>
+        <div class="privacy-notice">
+            <div class="privacy-notice-title">
+                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                请注意以下事项
+            </div>
+            <ul>
+                <li>不建议填写身份证号、电话号码和详细家庭住址；</li>
+                <li>涉及在世家人的敏感经历时，应先取得同意；</li>
+                <li>"仅自己、仅家人、可公开"目前是原型中的隐私意向，不是真实权限系统；</li>
+                <li>发布或分享前，应由用户再次人工检查内容。</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===== 返回按钮 ===== -->
+    <div class="back-area">
+        <a href="index.html" class="btn-back">返回时光展柜</a>
+    </div>
+
+</div>
+
+<!-- ===== Footer ===== -->
+<footer class="site-footer">
+    <p>时光展柜 · 让每一段人生都值得被展览</p>
+</footer>
+
+<script>
+    function useOutline(type) {
+        var outlines = {
+            person: '\u8fd9\u4e2a\u4eba\u662f\u8c01\uff1f\n\u4f60\u7b2c\u4e00\u6b21\u6e05\u695a\u5730\u8bb0\u5f97\u4ed6\u6216\u5979\uff0c\u662f\u4ec0\u4e48\u65f6\u5019\uff1f\n\u5f53\u65f6\u5728\u4ec0\u4e48\u5730\u65b9\uff1f\n\u4ed6\u6216\u5979\u7ecf\u5e38\u8bf4\u7684\u4e00\u53e5\u8bdd\u662f\u4ec0\u4e48\uff1f\n\u6709\u54ea\u4e00\u4ef6\u5c0f\u4e8b\u6700\u80fd\u4ee3\u8868\u8fd9\u4e2a\u4eba\uff1f\n\u4f60\u73b0\u5728\u6700\u60f3\u518d\u95ee\u4ed6\u6216\u5979\u4ec0\u4e48\uff1f',
+            place: '\u8fd9\u662f\u54ea\u91cc\uff1f\n\u4f60\u4ec0\u4e48\u65f6\u5019\u751f\u6d3b\u6216\u5230\u8fc7\u90a3\u91cc\uff1f\n\u90a3\u91cc\u7684\u58f0\u97f3\u3001\u6c14\u5473\u548c\u5149\u7ebf\u662f\u4ec0\u4e48\u6837\u7684\uff1f\n\u54ea\u4e9b\u4eba\u7ecf\u5e38\u5728\u90a3\u91cc\u51fa\u73b0\uff1f\n\u5728\u90a3\u91cc\u53d1\u751f\u8fc7\u4ec0\u4e48\u96be\u5fd8\u7684\u4e8b\u60c5\uff1f\n\u8fd9\u4e2a\u5730\u65b9\u540e\u6765\u53d1\u751f\u4e86\u4ec0\u4e48\u53d8\u5316\uff1f',
+            object: '\u8fd9\u4ef6\u4e1c\u897f\u662f\u4ec0\u4e48\uff1f\n\u5b83\u539f\u6765\u5c5e\u4e8e\u8c01\uff1f\n\u4f60\u7b2c\u4e00\u6b21\u8bb0\u5f97\u5b83\u662f\u5728\u4ec0\u4e48\u65f6\u5019\uff1f\n\u4e0e\u5b83\u6709\u5173\u7684\u4e00\u4ef6\u5177\u4f53\u4e8b\u60c5\u662f\u4ec0\u4e48\uff1f\n\u5f53\u65f6\u8fd8\u6709\u8c01\u5728\u573a\uff1f\n\u5b83\u540e\u6765\u53bb\u4e86\u54ea\u91cc\uff1f\n\u73b0\u5728\u770b\u5230\u5b83\uff0c\u4f60\u6700\u5148\u60f3\u5230\u4ec0\u4e48\uff1f',
+            moment: '\u4e8b\u60c5\u53d1\u751f\u5728\u54ea\u4e00\u5e74\uff1f\n\u5f53\u65f6\u4f60\u5728\u54ea\u91cc\uff1f\n\u4e3a\u4ec0\u4e48\u4f1a\u53d1\u751f\u8fd9\u4ef6\u4e8b\uff1f\n\u5f53\u65f6\u6709\u54ea\u4e9b\u4eba\u5728\u573a\uff1f\n\u4f60\u6700\u6e05\u695a\u5730\u8bb0\u5f97\u54ea\u4e2a\u7ec6\u8282\uff1f\n\u5f53\u65f6\u4f60\u662f\u4ec0\u4e48\u611f\u53d7\uff1f\n\u8fd9\u4ef6\u4e8b\u540e\u6765\u600e\u6837\u5f71\u54cd\u4e86\u4f60\uff1f'
+        };
+        localStorage.setItem('memoryCabinetStarter', outlines[type]);
+        window.location.href = 'index.html';
+    }
+</script>
+</body>
+</html>
