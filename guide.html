@@ -52,7 +52,7 @@
 
         /* ===== Container ===== */
         .guide-container {
-            max-width: 960px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 0 20px;
             flex: 1;
@@ -77,6 +77,44 @@
             max-width: 520px;
             margin: 0 auto;
             line-height: 1.7;
+        }
+
+        /* ===== Mode Switcher ===== */
+        .mode-switcher {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 40px;
+        }
+        .mode-btn {
+            padding: 12px 28px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            border: 1px solid var(--border-warm);
+            background: var(--card-bg);
+            color: var(--text-medium);
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.03em;
+        }
+        .mode-btn:first-child {
+            border-radius: 4px 0 0 4px;
+            border-right: none;
+        }
+        .mode-btn:last-child {
+            border-radius: 0 4px 4px 0;
+        }
+        .mode-btn.active {
+            background: var(--accent-gold);
+            color: #fff;
+            border-color: var(--accent-gold);
+        }
+        .mode-btn:hover:not(.active) {
+            background: var(--bg-warm);
+        }
+        .mode-btn:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: 2px;
         }
 
         /* ===== Section ===== */
@@ -144,6 +182,19 @@
             line-height: 1.7;
             margin-bottom: 16px;
         }
+        .memory-source-marker {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            padding: 10px 14px;
+            background: var(--bg-warm);
+            border-radius: 3px;
+            margin-bottom: 14px;
+            line-height: 1.9;
+        }
+        .memory-source-marker strong {
+            color: var(--text-medium);
+            font-weight: 600;
+        }
         .starter-outline {
             list-style: none;
             padding: 0;
@@ -191,6 +242,10 @@
             background: rgba(160,82,45,0.08);
             transform: translateY(-1px);
         }
+        .btn-use-outline:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: 2px;
+        }
 
         /* ===== Comparison Cards ===== */
         .comparison-wrapper {
@@ -218,7 +273,6 @@
             letter-spacing: 0.08em;
             color: var(--text-light);
             margin-bottom: 8px;
-            text-transform: uppercase;
         }
         .comparison-text {
             font-size: 0.95rem;
@@ -230,48 +284,567 @@
             font-style: italic;
         }
 
-        /* ===== Tips List ===== */
-        .tips-list {
-            list-style: none;
-            padding: 0;
+        /* ===== Timeline (30-min interview) ===== */
+        .timeline {
+            position: relative;
+            padding-left: 36px;
+            margin-top: 24px;
         }
-        .tips-list li {
-            padding: 14px 14px 14px 16px;
-            margin-bottom: 10px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-light);
-            border-radius: 4px;
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-            font-size: 0.875rem;
-            color: var(--text-medium);
-            line-height: 1.7;
-            transition: all 0.3s;
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 11px;
+            top: 6px;
+            bottom: 6px;
+            width: 2px;
+            background: var(--border-warm);
         }
-        .tips-list li:hover {
-            border-color: var(--accent-gold);
-            background: var(--bg-warm);
+        .timeline-step {
+            position: relative;
+            margin-bottom: 36px;
         }
-        .tips-list li:last-child {
+        .timeline-step:last-child {
             margin-bottom: 0;
         }
-        .tip-num {
-            background: var(--accent-gold);
-            color: white;
+        .timeline-dot {
+            position: absolute;
+            left: -36px;
+            top: 4px;
             width: 24px;
             height: 24px;
             border-radius: 50%;
+            background: var(--card-bg);
+            border: 3px solid var(--accent-gold);
+            z-index: 1;
+        }
+        .timeline-step-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-brown);
+            margin-bottom: 4px;
+        }
+        .timeline-step-time {
+            font-size: 0.78rem;
+            color: var(--text-light);
+            margin-bottom: 12px;
+        }
+        .timeline-step ul {
+            list-style: none;
+            padding: 0;
+        }
+        .timeline-step ul li {
+            padding: 6px 0 6px 18px;
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            position: relative;
+            line-height: 1.7;
+            border-bottom: 1px solid var(--bg-warm);
+        }
+        .timeline-step ul li:last-child {
+            border-bottom: none;
+        }
+        .timeline-step ul li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border-warm);
+        }
+        .timeline-quote {
+            background: var(--bg-warm);
+            border-left: 3px solid var(--accent-gold);
+            padding: 16px 20px;
+            font-size: 0.95rem;
+            color: var(--text-medium);
+            font-style: italic;
+            line-height: 1.8;
+            margin: 14px 0;
+            border-radius: 0 3px 3px 0;
+        }
+        .timeline-note {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 24px;
+            padding: 12px 16px;
+            background: var(--bg-warm);
+            border-radius: 3px;
+            line-height: 1.6;
+        }
+
+        /* ===== Details/Summary ===== */
+        .toolbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        @media (max-width: 900px) {
+            .toolbox-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .toolbox-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(44,31,22,0.04);
+            overflow: hidden;
+        }
+        .toolbox-card summary {
+            padding: 16px 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-brown);
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        .toolbox-card summary:hover {
+            background: var(--bg-warm);
+        }
+        .toolbox-card summary::after {
+            content: "+";
+            font-size: 1.2rem;
+            color: var(--text-light);
+            font-weight: 400;
+            flex-shrink: 0;
+            margin-left: 12px;
+        }
+        .toolbox-card[open] summary::after {
+            content: "\2212";
+        }
+        .toolbox-card summary::-webkit-details-marker {
+            display: none;
+        }
+        .toolbox-card summary:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: -2px;
+        }
+        .toolbox-card .toolbox-body {
+            padding: 0 20px 18px;
+        }
+        .toolbox-card .toolbox-body ul {
+            list-style: none;
+            padding: 0;
+        }
+        .toolbox-card .toolbox-body ul li {
+            padding: 7px 0 7px 18px;
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            position: relative;
+            line-height: 1.7;
+            border-bottom: 1px solid var(--bg-warm);
+        }
+        .toolbox-card .toolbox-body ul li:last-child {
+            border-bottom: none;
+        }
+        .toolbox-card .toolbox-body ul li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border-warm);
+        }
+        .toolbox-extra-tip {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 16px;
+            padding: 10px 14px;
+            background: var(--bg-warm);
+            border-radius: 3px;
+            line-height: 1.6;
+        }
+
+        /* ===== Life Grid ===== */
+        .life-grid-controls {
+            display: flex;
+            gap: 16px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .life-grid-controls label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-medium);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .life-grid-controls select {
+            font-family: inherit;
+            font-size: 0.875rem;
+            padding: 10px 14px;
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            background: var(--card-bg);
+            color: var(--text-brown);
+            cursor: pointer;
+            min-width: 180px;
+            appearance: auto;
+        }
+        .life-grid-controls select:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: 2px;
+        }
+        .btn-generate {
+            padding: 10px 24px;
+            background: var(--accent-gold);
+            color: #fff;
+            border: none;
+            font-size: 0.875rem;
+            font-family: inherit;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.03em;
+        }
+        .btn-generate:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .btn-generate:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: 2px;
+        }
+        .btn-generate:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #lifeGridResult {
+            display: none;
+            margin-top: 24px;
+        }
+        #lifeGridResult .result-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            padding: 24px 28px;
+            box-shadow: 0 2px 8px rgba(44,31,22,0.04);
+        }
+        #lifeGridResult .result-card h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-brown);
+            margin-bottom: 14px;
+        }
+        #lifeGridResult .result-card ol {
+            list-style: none;
+            padding: 0;
+            counter-reset: q-counter;
+        }
+        #lifeGridResult .result-card ol li {
+            padding: 8px 0 8px 36px;
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            line-height: 1.7;
+            border-bottom: 1px solid var(--bg-warm);
+            position: relative;
+            counter-increment: q-counter;
+        }
+        #lifeGridResult .result-card ol li:last-child {
+            border-bottom: none;
+        }
+        #lifeGridResult .result-card ol li::before {
+            content: counter(q-counter);
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--bg-warm);
+            color: var(--text-medium);
+            font-size: 0.78rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.78rem;
-            font-family: sans-serif;
-            flex-shrink: 0;
-            margin-top: 1px;
+            font-family: "Georgia", serif;
+        }
+        .btn-use-grid {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 11px 24px;
+            background: transparent;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            font-size: 0.875rem;
+            font-family: inherit;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            letter-spacing: 0.03em;
+        }
+        .btn-use-grid:hover {
+            background: rgba(160,82,45,0.08);
+            transform: translateY(-1px);
+        }
+        .btn-use-grid:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: 2px;
         }
 
-        /* ===== Good Oral Checklist ===== */
+        /* ===== Photo Elicitation Card ===== */
+        .method-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            padding: 28px;
+            box-shadow: 0 2px 8px rgba(44,31,22,0.04);
+        }
+        .method-card h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-brown);
+            margin-bottom: 18px;
+        }
+        .method-step {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 18px;
+            align-items: flex-start;
+        }
+        .method-step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--bg-warm);
+            color: var(--text-medium);
+            font-size: 0.82rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-family: "Georgia", serif;
+            margin-top: 2px;
+        }
+        .method-step-content {
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            line-height: 1.7;
+            flex: 1;
+        }
+        .method-step-content ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+        .method-step-content ul li {
+            padding: 5px 0 5px 18px;
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            position: relative;
+            line-height: 1.6;
+            border-bottom: 1px solid var(--bg-warm);
+        }
+        .method-step-content ul li:last-child {
+            border-bottom: none;
+        }
+        .method-step-content ul li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border-warm);
+        }
+
+        /* ===== Copy Button ===== */
+        .btn-copy {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 10px 20px;
+            background: transparent;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            font-size: 0.85rem;
+            font-family: inherit;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-copy:hover {
+            background: rgba(160,82,45,0.08);
+        }
+        .btn-copy:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: 2px;
+        }
+
+        /* ===== Toast Feedback ===== */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--text-brown);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            opacity: 0;
+            transition: all 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ===== Memory Notice (gold border variant) ===== */
+        .memory-notice {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-gold);
+            border-left: 4px solid var(--accent-gold);
+            border-radius: 4px;
+            padding: 24px 28px;
+            box-shadow: 0 2px 8px rgba(160,82,45,0.06);
+        }
+        .memory-notice-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+            margin-bottom: 14px;
+        }
+        .memory-notice ul {
+            list-style: none;
+            padding: 0;
+        }
+        .memory-notice ul li {
+            padding: 8px 0 8px 16px;
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            line-height: 1.7;
+            border-bottom: 1px solid var(--bg-warm);
+            position: relative;
+        }
+        .memory-notice ul li:last-child {
+            border-bottom: none;
+        }
+        .memory-notice ul li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+        }
+        .memory-notice .source-checklist {
+            margin-top: 14px;
+            padding: 12px 16px;
+            background: var(--bg-warm);
+            border-radius: 3px;
+            font-size: 0.85rem;
+            color: var(--text-medium);
+            line-height: 1.9;
+        }
+
+        /* ===== Simple List (for interviewer reflection etc.) ===== */
+        .simple-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 16px;
+        }
+        .simple-list li {
+            padding: 9px 0 9px 18px;
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            position: relative;
+            line-height: 1.7;
+            border-bottom: 1px solid var(--bg-warm);
+        }
+        .simple-list li:last-child {
+            border-bottom: none;
+        }
+        .simple-list li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border-warm);
+        }
+        .simple-list-note {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 16px;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* ===== Consent List ===== */
+        .consent-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 16px;
+        }
+        .consent-list li {
+            padding: 10px 0 10px 18px;
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            line-height: 1.7;
+            border-bottom: 1px solid var(--bg-warm);
+            position: relative;
+        }
+        .consent-list li:last-child {
+            border-bottom: none;
+        }
+        .consent-list li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 14px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-red);
+        }
+
+        /* ===== Field Notes ===== */
+        .field-notes-area {
+            width: 100%;
+            min-height: 360px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            line-height: 1.8;
+            color: var(--text-medium);
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            padding: 20px 24px;
+            resize: vertical;
+            margin-top: 16px;
+        }
+        .field-notes-area:focus {
+            outline: 2px solid var(--border-warm);
+        }
+
+        /* ===== Oral Checklist ===== */
         .oral-checklist {
             background: var(--card-bg);
             border: 1px solid var(--border-light);
@@ -364,6 +937,65 @@
             background: var(--accent-red);
         }
 
+        /* ===== Method Sources (details) ===== */
+        .sources-block {
+            margin-top: 40px;
+            margin-bottom: 24px;
+        }
+        .sources-block details {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(44,31,22,0.04);
+        }
+        .sources-block summary {
+            padding: 16px 24px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-medium);
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        .sources-block summary:hover {
+            background: var(--bg-warm);
+        }
+        .sources-block summary:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: -2px;
+        }
+        .sources-block summary::-webkit-details-marker {
+            display: none;
+        }
+        .sources-block .sources-body {
+            padding: 0 24px 24px;
+        }
+        .sources-block .sources-body ol {
+            padding-left: 20px;
+            font-size: 0.85rem;
+            color: var(--text-medium);
+            line-height: 2;
+        }
+        .sources-block .sources-body ol li {
+            padding-left: 4px;
+        }
+        .sources-block .sources-body a {
+            color: var(--accent-gold);
+            text-decoration: none;
+            word-break: break-all;
+        }
+        .sources-block .sources-body a:hover {
+            text-decoration: underline;
+        }
+        .sources-disclaimer {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 14px;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
         /* ===== Back ===== */
         .back-area {
             text-align: center;
@@ -385,6 +1017,10 @@
         .btn-back:hover {
             background: rgba(160,82,45,0.08);
         }
+        .btn-back:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: 2px;
+        }
 
         /* ===== Footer ===== */
         .site-footer {
@@ -402,15 +1038,25 @@
             .hero-title { padding: 32px 16px 28px; }
             .comparison-item { padding: 18px 20px; }
             .starter-card { padding: 22px 20px 20px; }
+            .mode-switcher { flex-direction: column; align-items: stretch; gap: 0; }
+            .mode-btn:first-child { border-radius: 4px 4px 0 0; border-right: 1px solid var(--border-warm); border-bottom: none; }
+            .mode-btn:last-child { border-radius: 0 0 4px 4px; }
+            .life-grid-controls { flex-direction: column; }
+            .life-grid-controls select { width: 100%; }
+            .method-card { padding: 20px; }
+            .field-notes-area { min-height: 280px; }
         }
     </style>
 </head>
 <body>
 
+<!-- ===== Toast ===== -->
+<div class="toast" id="toast"></div>
+
 <!-- ===== Header ===== -->
 <header class="site-header">
     <h1>时光展柜</h1>
-    <p class="subtitle">口述指南</p>
+    <p class="subtitle">口述指南 · 家庭口述史田野工作台</p>
 </header>
 
 <div class="guide-container">
@@ -421,18 +1067,27 @@
         <p>选择一个容易回答的入口，先讲五分钟。真实的细节比完整的履历更重要。</p>
     </div>
 
-    <!-- ===== 模块一：四种开始方式 ===== -->
+    <!-- ===== Mode Switcher ===== -->
+    <div class="mode-switcher" role="tablist" aria-label="选择口述模式">
+        <button class="mode-btn active" id="btnModeSelf" role="tab" aria-selected="true" onclick="switchMode('self')">我自己讲</button>
+        <button class="mode-btn" id="btnModeInterview" role="tab" aria-selected="false" onclick="switchMode('interview')">我来采访长辈</button>
+    </div>
+
+    <!-- ===== 模块一：快速开始 ===== -->
     <section class="guide-section">
-        <div class="section-label">四种开始方式</div>
+        <div class="section-label">快速开始</div>
         <div class="starter-grid">
 
-            <!-- 卡片1：从一个人开始 -->
             <div class="starter-card">
                 <div class="starter-card-header">
                     <span class="card-number">1</span>
                     <span class="starter-card-title">从一个人开始</span>
                 </div>
                 <p class="starter-card-desc">想起一个对你影响很深的人，不必先介绍完整关系，从第一次记得他或她的场景开始。</p>
+                <div class="memory-source-marker">
+                    <strong>【记忆来源】</strong><br>
+                    &#9633; 本人亲历 &nbsp; &#9633; 家人转述 &nbsp; &#9633; 大约记得 &nbsp; &#9633; 需要核实
+                </div>
                 <ul class="starter-outline">
                     <li>这个人是谁？</li>
                     <li>你第一次清楚地记得他或她，是什么时候？</li>
@@ -444,13 +1099,16 @@
                 <button class="btn-use-outline" onclick="useOutline('person')">用这个提纲开始</button>
             </div>
 
-            <!-- 卡片2：从一个地方开始 -->
             <div class="starter-card">
                 <div class="starter-card-header">
                     <span class="card-number">2</span>
                     <span class="starter-card-title">从一个地方开始</span>
                 </div>
                 <p class="starter-card-desc">从老家、学校、工厂、院子、车站或一间房子开始。</p>
+                <div class="memory-source-marker">
+                    <strong>【记忆来源】</strong><br>
+                    &#9633; 本人亲历 &nbsp; &#9633; 家人转述 &nbsp; &#9633; 大约记得 &nbsp; &#9633; 需要核实
+                </div>
                 <ul class="starter-outline">
                     <li>这是哪里？</li>
                     <li>你什么时候生活或到过那里？</li>
@@ -462,13 +1120,16 @@
                 <button class="btn-use-outline" onclick="useOutline('place')">用这个提纲开始</button>
             </div>
 
-            <!-- 卡片3：从一件旧物开始 -->
             <div class="starter-card">
                 <div class="starter-card-header">
                     <span class="card-number">3</span>
                     <span class="starter-card-title">从一件旧物开始</span>
                 </div>
                 <p class="starter-card-desc">从照片、衣服、缝纫机、信件、车票、工具或家具开始。</p>
+                <div class="memory-source-marker">
+                    <strong>【记忆来源】</strong><br>
+                    &#9633; 本人亲历 &nbsp; &#9633; 家人转述 &nbsp; &#9633; 大约记得 &nbsp; &#9633; 需要核实
+                </div>
                 <ul class="starter-outline">
                     <li>这件东西是什么？</li>
                     <li>它原来属于谁？</li>
@@ -481,13 +1142,16 @@
                 <button class="btn-use-outline" onclick="useOutline('object')">用这个提纲开始</button>
             </div>
 
-            <!-- 卡片4：从一个难忘时刻开始 -->
             <div class="starter-card">
                 <div class="starter-card-header">
                     <span class="card-number">4</span>
                     <span class="starter-card-title">从一个难忘时刻开始</span>
                 </div>
                 <p class="starter-card-desc">从第一次离家、一次搬迁、一场婚礼、一份工作或一次告别开始。</p>
+                <div class="memory-source-marker">
+                    <strong>【记忆来源】</strong><br>
+                    &#9633; 本人亲历 &nbsp; &#9633; 家人转述 &nbsp; &#9633; 大约记得 &nbsp; &#9633; 需要核实
+                </div>
                 <ul class="starter-outline">
                     <li>事情发生在哪一年？</li>
                     <li>当时你在哪里？</li>
@@ -503,7 +1167,374 @@
         </div>
     </section>
 
-    <!-- ===== 模块二：怎样讲得更具体 ===== -->
+    <!-- ===== 模块二：一场30分钟访谈（仅采访模式） ===== -->
+    <section class="guide-section mode-interview" style="display:none;">
+        <div class="section-label">一场30分钟访谈</div>
+        <p style="font-size:0.95rem;color:var(--text-medium);margin-bottom:8px;">五步时间路线，从准备到结束，适合家庭环境下的非正式访谈。</p>
+
+        <div class="timeline">
+            <div class="timeline-step">
+                <div class="timeline-dot"></div>
+                <div class="timeline-step-title">访谈前</div>
+                <div class="timeline-step-time">约 3 分钟</div>
+                <ul>
+                    <li>说明记录目的</li>
+                    <li>说明可能的使用方式</li>
+                    <li>询问是否允许录音</li>
+                    <li>告知可以跳过、暂停或停止</li>
+                    <li>询问哪些内容不希望公开</li>
+                </ul>
+            </div>
+
+            <div class="timeline-step">
+                <div class="timeline-dot"></div>
+                <div class="timeline-step-title">热身</div>
+                <div class="timeline-step-time">约 5 分钟</div>
+                <ul>
+                    <li>从容易回答的问题开始</li>
+                    <li>不从"请讲讲你的一生"开始</li>
+                </ul>
+            </div>
+
+            <div class="timeline-step">
+                <div class="timeline-dot"></div>
+                <div class="timeline-step-title">完整故事</div>
+                <div class="timeline-step-time">约 15 分钟</div>
+                <div class="timeline-quote">"请从你最早记得的那个场景讲起，按照你觉得重要的顺序讲。我先听，中间不会频繁打断。"</div>
+            </div>
+
+            <div class="timeline-step">
+                <div class="timeline-dot"></div>
+                <div class="timeline-step-title">澄清补充</div>
+                <div class="timeline-step-time">约 5 分钟</div>
+                <ul>
+                    <li>时间</li>
+                    <li>地点</li>
+                    <li>人物</li>
+                    <li>动作</li>
+                    <li>旧物</li>
+                    <li>感受</li>
+                </ul>
+            </div>
+
+            <div class="timeline-step">
+                <div class="timeline-dot"></div>
+                <div class="timeline-step-title">结束确认</div>
+                <div class="timeline-step-time">约 2 分钟</div>
+                <ul>
+                    <li>还有什么没问但希望留下？</li>
+                    <li>哪些内容不适合公开？</li>
+                    <li>下次最值得继续问什么？</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="timeline-note">以上时间仅为家庭访谈建议，不是专业访谈的固定标准。</div>
+    </section>
+
+    <!-- ===== 模块三：追问工具箱 ===== -->
+    <section class="guide-section">
+        <div class="section-label">追问工具箱</div>
+        <p style="font-size:0.95rem;color:var(--text-medium);margin-bottom:4px;">当讲述者停下来或讲得比较笼统时，从这些方向追问。</p>
+
+        <div class="toolbox-grid">
+            <details class="toolbox-card">
+                <summary>继续追问</summary>
+                <div class="toolbox-body">
+                    <ul>
+                        <li>后来呢？</li>
+                        <li>接下来发生了什么？</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details class="toolbox-card">
+                <summary>场景追问</summary>
+                <div class="toolbox-body">
+                    <ul>
+                        <li>当时房间、街道或院子是什么样？</li>
+                        <li>当时是什么时间和天气？</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details class="toolbox-card">
+                <summary>行动追问</summary>
+                <div class="toolbox-body">
+                    <ul>
+                        <li>谁做了什么？</li>
+                        <li>你当时做了什么？</li>
+                        <li>其他人有什么反应？</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details class="toolbox-card">
+                <summary>感官追问</summary>
+                <div class="toolbox-body">
+                    <ul>
+                        <li>你还记得什么声音、气味、温度或光线吗？</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details class="toolbox-card">
+                <summary>对比变化</summary>
+                <div class="toolbox-body">
+                    <ul>
+                        <li>那以前和后来有什么不同？</li>
+                        <li>什么时候开始发生变化？</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details class="toolbox-card">
+                <summary>意义追问</summary>
+                <div class="toolbox-body">
+                    <ul>
+                        <li>现在回头看，这件事对你意味着什么？</li>
+                        <li>它后来怎样影响了你？</li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+
+        <div class="toolbox-extra-tip">追问时可以补充确认："这件事是你亲身经历的，还是后来听家人讲的？"</div>
+    </section>
+
+    <!-- ===== 模块四：人生时间格 ===== -->
+    <section class="guide-section">
+        <div class="section-label">人生时间格</div>
+        <p style="font-size:0.95rem;color:var(--text-medium);margin-bottom:4px;">选择一个人生阶段和主题，生成本地采访提纲。</p>
+
+        <div class="life-grid-controls">
+            <div>
+                <label for="stageSelect">人生阶段</label>
+                <select id="stageSelect">
+                    <option value="">-- 请选择 --</option>
+                    <option value="childhood">童年</option>
+                    <option value="school">上学</option>
+                    <option value="firstjob">第一次工作</option>
+                    <option value="love_marriage">恋爱与成家</option>
+                    <option value="relocation">搬迁与离乡</option>
+                    <option value="raising_children">抚养子女</option>
+                    <option value="middle_late">中晚年</option>
+                    <option value="retirement">退休以后</option>
+                </select>
+            </div>
+            <div>
+                <label for="topicSelect">主题</label>
+                <select id="topicSelect">
+                    <option value="">-- 请选择 --</option>
+                    <option value="residence">居住地点</option>
+                    <option value="family">家庭关系</option>
+                    <option value="education">学校教育</option>
+                    <option value="work">工作与手艺</option>
+                    <option value="objects">重要旧物</option>
+                    <option value="society">社会变化</option>
+                    <option value="turning">人生转折</option>
+                </select>
+            </div>
+            <div>
+                <button class="btn-generate" id="btnGenerate" onclick="generateLifeGrid()">生成这一段的采访提纲</button>
+            </div>
+        </div>
+
+        <div id="lifeGridResult">
+            <div class="result-card">
+                <h4 id="lifeGridTitle"></h4>
+                <ol id="lifeGridQuestions"></ol>
+                <button class="btn-use-grid" id="btnUseGrid" onclick="useGridOutline()">用这个提纲开始</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 模块五：照片与旧物引谈法 ===== -->
+    <section class="guide-section">
+        <div class="section-label">照片与旧物引谈法</div>
+
+        <div class="method-card">
+            <h3>用照片或旧物引出故事</h3>
+
+            <div class="method-step">
+                <span class="method-step-num">1</span>
+                <span class="method-step-content">把照片或物件放在两人都能看到的位置。</span>
+            </div>
+            <div class="method-step">
+                <span class="method-step-num">2</span>
+                <span class="method-step-content">先让讲述者观察，不急着解释。</span>
+            </div>
+            <div class="method-step">
+                <span class="method-step-num">3</span>
+                <span class="method-step-content">先问："你第一眼注意到什么？"</span>
+            </div>
+            <div class="method-step">
+                <span class="method-step-num">4</span>
+                <span class="method-step-content">再依次询问：
+                    <ul>
+                        <li>这是什么时候？</li>
+                        <li>这是哪里？</li>
+                        <li>有哪些人在场？</li>
+                        <li>当时发生了什么？</li>
+                        <li>谁没有出现在照片里？</li>
+                        <li>为什么它被保存下来？</li>
+                        <li>它后来去了哪里？</li>
+                    </ul>
+                </span>
+            </div>
+            <div class="method-step">
+                <span class="method-step-num">5</span>
+                <span class="method-step-content">不替讲述者判断人物身份和照片意义。</span>
+            </div>
+
+            <button class="btn-copy" onclick="copyPhotoOutline()">复制照片访谈提纲</button>
+        </div>
+    </section>
+
+    <!-- ===== 模块六：避免诱导性问题 ===== -->
+    <section class="guide-section">
+        <div class="section-label">避免诱导性问题</div>
+        <p style="font-size:0.95rem;color:var(--text-medium);margin-bottom:16px;">避免在问题中预设答案，让讲述者用自己的话描述。</p>
+
+        <div class="comparison-wrapper">
+            <div class="comparison-item vague">
+                <div class="comparison-label">不建议</div>
+                <div class="comparison-text">那时候生活一定很苦吧？</div>
+            </div>
+            <div class="comparison-item specific">
+                <div class="comparison-label">建议</div>
+                <div class="comparison-text specific-text">那时候的日常生活是什么样的？</div>
+            </div>
+        </div>
+
+        <div class="comparison-wrapper">
+            <div class="comparison-item vague">
+                <div class="comparison-label">不建议</div>
+                <div class="comparison-text">外公是不是一直反对你出去工作？</div>
+            </div>
+            <div class="comparison-item specific">
+                <div class="comparison-label">建议</div>
+                <div class="comparison-text specific-text">当时家里人对你出去工作分别是什么反应？</div>
+            </div>
+        </div>
+
+        <div class="comparison-wrapper">
+            <div class="comparison-item vague">
+                <div class="comparison-label">不建议</div>
+                <div class="comparison-text">你是不是特别后悔？</div>
+            </div>
+            <div class="comparison-item specific">
+                <div class="comparison-label">建议</div>
+                <div class="comparison-text specific-text">你现在怎样看待当时的选择？</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 模块七：记忆不是档案 ===== -->
+    <section class="guide-section">
+        <div class="section-label">记忆不是档案</div>
+
+        <div class="memory-notice">
+            <div class="memory-notice-title">口述记忆的局限与价值</div>
+            <ul>
+                <li>不需要强迫讲述者说出精确年份；</li>
+                <li>可以记录"大约""可能""我记不清"；</li>
+                <li>不在讲述过程中频繁纠正；</li>
+                <li>口述材料记录的是经历以及讲述者如何理解经历，不能自动替代档案核实。</li>
+            </ul>
+            <div class="source-checklist">
+                <strong>将材料标记为：</strong><br>
+                &#9633; 本人亲历 &nbsp; &#9633; 家人转述 &nbsp; &#9633; 大约记得 &nbsp; &#9633; 需要核实
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 模块八：知情同意与敏感话题（仅采访模式） ===== -->
+    <section class="guide-section mode-interview" style="display:none;">
+        <div class="section-label">知情同意与敏感话题</div>
+
+        <ul class="consent-list">
+            <li>讲述者可以随时跳过问题、暂停或停止；</li>
+            <li>录音前应再次询问；</li>
+            <li>涉及其他在世人物时应谨慎；</li>
+            <li>对方情绪明显变化时先暂停，不连续追问；</li>
+            <li>不把沉默当作必须填补的空白；</li>
+            <li>公开前再次确认原话、照片和公开范围；</li>
+            <li>"仅自己、仅家人、可公开"目前仍是原型中的隐私意向，不是真实权限系统。</li>
+        </ul>
+    </section>
+
+    <!-- ===== 模块九：采访者反思（仅采访模式） ===== -->
+    <section class="guide-section mode-interview" style="display:none;">
+        <div class="section-label">采访者反思</div>
+        <p style="font-size:0.95rem;color:var(--text-medium);margin-bottom:4px;">每次访谈后回顾这些问题，帮助你更诚实地理解访谈材料。</p>
+
+        <ul class="simple-list">
+            <li>我与讲述者是什么关系？</li>
+            <li>当时还有谁在场？</li>
+            <li>我的身份和期待是否影响了回答？</li>
+            <li>哪些问题让对方犹豫？</li>
+            <li>哪些内容可能是为了迎合我而讲？</li>
+            <li>哪些地方需要再次核实？</li>
+            <li>哪些内容不宜公开？</li>
+        </ul>
+        <p class="simple-list-note">访谈不是完全中立的信息提取过程。</p>
+    </section>
+
+    <!-- ===== 模块十：访谈后的10分钟（仅采访模式） ===== -->
+    <section class="guide-section mode-interview" style="display:none;">
+        <div class="section-label">访谈后的10分钟</div>
+        <p style="font-size:0.95rem;color:var(--text-medium);margin-bottom:4px;">访谈结束后尽快填写，趁记忆还新鲜。</p>
+
+        <textarea class="field-notes-area" id="fieldNotes" readonly>【访谈日期】
+
+【访谈地点】
+
+【讲述者】
+
+【采访者与讲述者的关系】
+
+【现场还有谁】
+
+【记录方式】
+
+【今天最重要的三个主题】
+1.
+2.
+3.
+
+【需要核实的人名、地点和年份】
+
+【讲述者犹豫或不希望公开的内容】
+
+【可能受到采访者提问影响的部分】
+
+【下次最值得追问的问题】</textarea>
+
+        <br>
+        <button class="btn-copy" onclick="copyFieldNotes()">复制田野笔记模板</button>
+    </section>
+
+    <!-- ===== 模块十一：方法来源 ===== -->
+    <div class="sources-block">
+        <details>
+            <summary>方法来源</summary>
+            <div class="sources-body">
+                <ol>
+                    <li>Oral History Association: Principles and Best Practices - <a href="https://oralhistory.org/best-practices/" target="_blank" rel="noopener noreferrer">https://oralhistory.org/best-practices/</a></li>
+                    <li>Oral History Association: Core Principles - <a href="https://oralhistory.org/oha-core-principles/" target="_blank" rel="noopener noreferrer">https://oralhistory.org/oha-core-principles/</a></li>
+                    <li>Oral History Association: Informed Consent - <a href="https://oralhistory.org/informed-consent/" target="_blank" rel="noopener noreferrer">https://oralhistory.org/informed-consent/</a></li>
+                    <li>Smithsonian Institution Archives: How to Do Oral History - <a href="https://siarchives.si.edu/history/how-do-oral-history" target="_blank" rel="noopener noreferrer">https://siarchives.si.edu/history/how-do-oral-history</a></li>
+                    <li>Smithsonian Folklife and Oral History Interviewing Guide - <a href="https://folklife.si.edu/the-smithsonian-folklife-and-oral-history-interviewing-guide/smithsonian" target="_blank" rel="noopener noreferrer">https://folklife.si.edu/the-smithsonian-folklife-and-oral-history-interviewing-guide/smithsonian</a></li>
+                    <li>Life History Calendar 方法: Freedman et al., The Life History Calendar</li>
+                    <li>Photo Elicitation: Douglas Harper, Talking About Pictures</li>
+                </ol>
+                <p class="sources-disclaimer">"本页面是面向家庭使用的简化指南，不替代专业研究伦理审查、机构规范或受训访谈者。"</p>
+            </div>
+        </details>
+    </div>
+
+    <!-- ===== 怎样讲得更具体 ===== -->
     <section class="guide-section">
         <div class="section-label">怎样讲得更具体</div>
 
@@ -531,42 +1562,7 @@
         </div>
     </section>
 
-    <!-- ===== 模块三：采访长辈的小技巧 ===== -->
-    <section class="guide-section">
-        <div class="section-label">采访长辈的小技巧</div>
-        <ol class="tips-list">
-            <li>
-                <span class="tip-num">1</span>
-                <span>先问容易回答的问题，不要一开始就问"请讲讲你的一生"。</span>
-            </li>
-            <li>
-                <span class="tip-num">2</span>
-                <span>一次只问一个问题。</span>
-            </li>
-            <li>
-                <span class="tip-num">3</span>
-                <span>少打断，让讲述者按自己的顺序回忆。</span>
-            </li>
-            <li>
-                <span class="tip-num">4</span>
-                <span>遇到具体人物、地方和物件时，再追问细节。</span>
-            </li>
-            <li>
-                <span class="tip-num">5</span>
-                <span>年份记不清没有关系，可以先记录"大约在什么时候"。</span>
-            </li>
-            <li>
-                <span class="tip-num">6</span>
-                <span>不要替讲述者改写感受。</span>
-            </li>
-            <li>
-                <span class="tip-num">7</span>
-                <span>公开前再次确认涉及他人的内容是否适合展示。</span>
-            </li>
-        </ol>
-    </section>
-
-    <!-- ===== 模块四：隐私提醒 ===== -->
+    <!-- ===== 隐私提醒 ===== -->
     <section class="guide-section">
         <div class="section-label">隐私提醒</div>
         <div class="privacy-notice">
@@ -596,16 +1592,609 @@
 </footer>
 
 <script>
-    function useOutline(type) {
-        var outlines = {
-            person: '\u8fd9\u4e2a\u4eba\u662f\u8c01\uff1f\n\u4f60\u7b2c\u4e00\u6b21\u6e05\u695a\u5730\u8bb0\u5f97\u4ed6\u6216\u5979\uff0c\u662f\u4ec0\u4e48\u65f6\u5019\uff1f\n\u5f53\u65f6\u5728\u4ec0\u4e48\u5730\u65b9\uff1f\n\u4ed6\u6216\u5979\u7ecf\u5e38\u8bf4\u7684\u4e00\u53e5\u8bdd\u662f\u4ec0\u4e48\uff1f\n\u6709\u54ea\u4e00\u4ef6\u5c0f\u4e8b\u6700\u80fd\u4ee3\u8868\u8fd9\u4e2a\u4eba\uff1f\n\u4f60\u73b0\u5728\u6700\u60f3\u518d\u95ee\u4ed6\u6216\u5979\u4ec0\u4e48\uff1f',
-            place: '\u8fd9\u662f\u54ea\u91cc\uff1f\n\u4f60\u4ec0\u4e48\u65f6\u5019\u751f\u6d3b\u6216\u5230\u8fc7\u90a3\u91cc\uff1f\n\u90a3\u91cc\u7684\u58f0\u97f3\u3001\u6c14\u5473\u548c\u5149\u7ebf\u662f\u4ec0\u4e48\u6837\u7684\uff1f\n\u54ea\u4e9b\u4eba\u7ecf\u5e38\u5728\u90a3\u91cc\u51fa\u73b0\uff1f\n\u5728\u90a3\u91cc\u53d1\u751f\u8fc7\u4ec0\u4e48\u96be\u5fd8\u7684\u4e8b\u60c5\uff1f\n\u8fd9\u4e2a\u5730\u65b9\u540e\u6765\u53d1\u751f\u4e86\u4ec0\u4e48\u53d8\u5316\uff1f',
-            object: '\u8fd9\u4ef6\u4e1c\u897f\u662f\u4ec0\u4e48\uff1f\n\u5b83\u539f\u6765\u5c5e\u4e8e\u8c01\uff1f\n\u4f60\u7b2c\u4e00\u6b21\u8bb0\u5f97\u5b83\u662f\u5728\u4ec0\u4e48\u65f6\u5019\uff1f\n\u4e0e\u5b83\u6709\u5173\u7684\u4e00\u4ef6\u5177\u4f53\u4e8b\u60c5\u662f\u4ec0\u4e48\uff1f\n\u5f53\u65f6\u8fd8\u6709\u8c01\u5728\u573a\uff1f\n\u5b83\u540e\u6765\u53bb\u4e86\u54ea\u91cc\uff1f\n\u73b0\u5728\u770b\u5230\u5b83\uff0c\u4f60\u6700\u5148\u60f3\u5230\u4ec0\u4e48\uff1f',
-            moment: '\u4e8b\u60c5\u53d1\u751f\u5728\u54ea\u4e00\u5e74\uff1f\n\u5f53\u65f6\u4f60\u5728\u54ea\u91cc\uff1f\n\u4e3a\u4ec0\u4e48\u4f1a\u53d1\u751f\u8fd9\u4ef6\u4e8b\uff1f\n\u5f53\u65f6\u6709\u54ea\u4e9b\u4eba\u5728\u573a\uff1f\n\u4f60\u6700\u6e05\u695a\u5730\u8bb0\u5f97\u54ea\u4e2a\u7ec6\u8282\uff1f\n\u5f53\u65f6\u4f60\u662f\u4ec0\u4e48\u611f\u53d7\uff1f\n\u8fd9\u4ef6\u4e8b\u540e\u6765\u600e\u6837\u5f71\u54cd\u4e86\u4f60\uff1f'
-        };
-        localStorage.setItem('memoryCabinetStarter', outlines[type]);
-        window.location.href = 'index.html';
+/* ===== Mode Switch ===== */
+function switchMode(mode) {
+    var selfContent = document.querySelectorAll('.mode-self');
+    var interviewContent = document.querySelectorAll('.mode-interview');
+    var btnSelf = document.getElementById('btnModeSelf');
+    var btnInterview = document.getElementById('btnModeInterview');
+
+    if (mode === 'self') {
+        selfContent.forEach(function(el) { el.style.display = ''; });
+        interviewContent.forEach(function(el) { el.style.display = 'none'; });
+        btnSelf.classList.add('active');
+        btnSelf.setAttribute('aria-selected', 'true');
+        btnInterview.classList.remove('active');
+        btnInterview.setAttribute('aria-selected', 'false');
+    } else {
+        selfContent.forEach(function(el) { el.style.display = ''; });
+        interviewContent.forEach(function(el) { el.style.display = ''; });
+        btnInterview.classList.add('active');
+        btnInterview.setAttribute('aria-selected', 'true');
+        btnSelf.classList.remove('active');
+        btnSelf.setAttribute('aria-selected', 'false');
     }
+}
+
+/* ===== Toast ===== */
+function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2000);
+}
+
+/* ===== Use Outline (with memory source marker) ===== */
+function useOutline(type) {
+    var outlines = {
+        person: '这个人是谁？\n你第一次清楚地记得他或她，是什么时候？\n当时在什么地方？\n他或她经常说的一句话是什么？\n有哪一件小事最能代表这个人？\n你现在最想再问他或她什么？',
+        place: '这是哪里？\n你什么时候生活或到过那里？\n那里的声音、气味和光线是什么样的？\n哪些人经常在那里出现？\n在那里发生过什么难忘的事情？\n这个地方后来发生了什么变化？',
+        object: '这件东西是什么？\n它原来属于谁？\n你第一次记得它是在什么时候？\n与它有关的一件具体事情是什么？\n当时还有谁在场？\n它后来去了哪里？\n现在看到它，你最先想到什么？',
+        moment: '事情发生在哪一年？\n当时你在哪里？\n为什么会发生这件事？\n当时有哪些人在场？\n你最清楚地记得哪个细节？\n当时你是什么感受？\n这件事后来怎样影响了你？'
+    };
+    var sourceMarker = '【记忆来源】\n□ 本人亲历\n□ 家人转述\n□ 大约记得\n□ 需要核实\n\n';
+    localStorage.setItem('memoryCabinetStarter', sourceMarker + outlines[type]);
+    window.location.href = 'index.html';
+}
+
+/* ===== Copy Photo Outline ===== */
+function copyPhotoOutline() {
+    var text = '你第一眼注意到什么？\n这是什么时候？\n这是哪里？\n有哪些人在场？\n当时发生了什么？\n谁没有出现在照片里？\n为什么它被保存下来？\n它后来去了哪里？';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+            showToast('已复制照片访谈提纲');
+        }).catch(function() {
+            fallbackCopy(text);
+        });
+    } else {
+        fallbackCopy(text);
+    }
+}
+
+/* ===== Copy Field Notes ===== */
+function copyFieldNotes() {
+    var text = document.getElementById('fieldNotes').value;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+            showToast('已复制田野笔记模板');
+        }).catch(function() {
+            fallbackCopy(text);
+        });
+    } else {
+        fallbackCopy(text);
+    }
+}
+
+/* ===== Fallback Copy ===== */
+function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try {
+        document.execCommand('copy');
+        showToast('已复制');
+    } catch (e) {
+        showToast('复制失败，请手动选择文本复制');
+    }
+    document.body.removeChild(ta);
+}
+
+/* ===== Life Grid: Question Bank (56 combinations) ===== */
+var stageLabels = {
+    childhood: '童年', school: '上学', firstjob: '第一次工作',
+    love_marriage: '恋爱与成家', relocation: '搬迁与离乡',
+    raising_children: '抚养子女', middle_late: '中晚年', retirement: '退休以后'
+};
+var topicLabels = {
+    residence: '居住地点', family: '家庭关系', education: '学校教育',
+    work: '工作与手艺', objects: '重要旧物', society: '社会变化', turning: '人生转折'
+};
+
+var questions = {
+    'childhood_residence': [
+        '你小时候住在哪里？那条街或那个村子叫什么？',
+        '那间房子有几间房？你最常待在哪里？',
+        '家里有没有院子？院子里种了什么？',
+        '从家到最近的水井、商店或车站有多远？',
+        '邻居之间来往多吗？',
+        '那间房子后来怎么样了？'
+    ],
+    'childhood_family': [
+        '小时候家里有几口人？',
+        '谁做饭、谁管钱？',
+        '家里最大的孩子和最小的孩子分别负责什么？',
+        '过年的时候家里怎么过？',
+        '家里人吵架了通常怎么和好？',
+        '你最想念家里的哪顿饭？'
+    ],
+    'childhood_education': [
+        '你上的第一所学校叫什么？',
+        '从家到学校有多远？怎么去的？',
+        '最喜欢的课是什么？',
+        '有没有一个让你印象深刻的老师？',
+        '放学后做什么？',
+        '有没有哪次考试或比赛让你特别紧张？'
+    ],
+    'childhood_work': [
+        '小时候有没有帮家里做过什么事？',
+        '家里靠什么维持生计？',
+        '大人干活的时候你在做什么？',
+        '有没有学会什么手艺或技能？',
+        '那时候小孩能赚到钱吗？',
+        '你第一次觉得自己在"帮忙"是什么时候？'
+    ],
+    'childhood_objects': [
+        '你小时候最喜欢的玩具或东西是什么？',
+        '那件东西是谁给你的？',
+        '它现在还在吗？',
+        '有没有一件东西是你一直想要的但没得到？',
+        '你的书包或衣服是什么样的？',
+        '家里最值钱的东西是什么？'
+    ],
+    'childhood_society': [
+        '那时候村里或街上发生了什么大事？',
+        '大人们经常议论什么？',
+        '有没有经历过什么政策变化？',
+        '你当时能感觉到外面世界在变吗？',
+        '粮食、布料这些东西当时怎么获得？',
+        '有没有见过什么新东西第一次出现在你们那里？'
+    ],
+    'childhood_turning': [
+        '小时候有没有哪件事让你突然觉得自己长大了？',
+        '有没有一次离开家超过一晚的经历？',
+        '家里有没有发生过什么重大变化？',
+        '有没有一个决定改变了你的生活方向？',
+        '有没有一个人离开了你的生活？',
+        '你最早记得的一次"分别"是什么？'
+    ],
+    'school_residence': [
+        '上学期间你住在哪里？',
+        '有没有住过校？宿舍是什么样？',
+        '家到学校的路上有什么？',
+        '你在学校的哪个位置待得最多？',
+        '周末一般回不回家？',
+        '有没有在学校附近租过房子？'
+    ],
+    'school_family': [
+        '上学期间和家里人的关系有什么变化？',
+        '父母对你的学业有什么期待？',
+        '家里人支持你继续读书吗？',
+        '你有没有因为学校的事和家里人闹过矛盾？',
+        '谁最关心你在学校的情况？',
+        '家里发生过什么影响了你的学业？'
+    ],
+    'school_education': [
+        '你一共换过几所学校？',
+        '哪所学校让你印象最深？',
+        '有没有一个老师特别影响了你？',
+        '课堂上最让你难忘的一件事是什么？',
+        '你有没有参加过什么课外活动？',
+        '学业上遇到过什么困难？'
+    ],
+    'school_work': [
+        '上学期间有没有做过兼职或帮工？',
+        '暑假或假期一般做什么？',
+        '有没有在学校学过什么实用技能？',
+        '你有没有想过毕业以后做什么？',
+        '有没有同学辍学去工作？',
+        '你什么时候开始考虑自己的职业？'
+    ],
+    'school_objects': [
+        '你上学时最常用的东西是什么？',
+        '有没有一件和学校有关的旧物留到现在？',
+        '你的课本和笔记本后来去了哪里？',
+        '有没有收到过什么特别的学习用品当礼物？',
+        '学校里有没有什么标志性的东西？',
+        '你有没有收藏过什么和同学有关的东西？'
+    ],
+    'school_society': [
+        '你上学的时候社会环境怎么样？',
+        '学校里有没有受到什么大的社会事件影响？',
+        '那个年代学生最关心什么？',
+        '有没有经历过什么校园里的变化？',
+        '你从哪里了解外面的世界？',
+        '同学们对未来的看法是什么？'
+    ],
+    'school_turning': [
+        '上学期间有没有什么关键转折？',
+        '有没有一次考试改变了你的方向？',
+        '有没有因为一个人或一件事改变了你的想法？',
+        '毕业时你是怎么决定的？',
+        '有没有想过如果当时做了不同的选择？',
+        '离开学校那天你记得什么？'
+    ],
+    'firstjob_residence': [
+        '开始工作后你住在哪儿？',
+        '是住单位宿舍还是自己找的房子？',
+        '那个地方的条件怎么样？',
+        '同住的都有谁？',
+        '周末一般怎么过？',
+        '第一次独立居住是什么感觉？'
+    ],
+    'firstjob_family': [
+        '工作后和家里的联系有什么变化？',
+        '家里人对你第一份工作怎么看？',
+        '你有没有寄钱回家？',
+        '工作以后和父母的关系有什么不同？',
+        '家里有没有因为你工作而发生什么变化？',
+        '你多久回一次家？'
+    ],
+    'firstjob_education': [
+        '第一份工作和你的学历有关系吗？',
+        '工作以后有没有继续学习？',
+        '有没有在工作中学会什么学校里没教的东西？',
+        '你有没有后悔没有多读一些书？',
+        '有没有参加过什么培训？',
+        '工作中遇到过什么让你觉得自己知识不够的时刻？'
+    ],
+    'firstjob_work': [
+        '你的第一份工作是什么？',
+        '怎么找到这份工作的？',
+        '第一天上班你记得什么？',
+        '工资是多少？够用吗？',
+        '有没有一个同事让你印象很深？',
+        '你在这份工作里学会了什么？'
+    ],
+    'firstjob_objects': [
+        '第一份工作用过什么工具或东西？',
+        '有没有买过什么来庆祝找到工作？',
+        '你的第一个工牌或工作证还在吗？',
+        '工作时穿的制服或衣服是什么样的？',
+        '有没有收到过什么和工作有关的纪念品？',
+        '办公桌上或工作台面上有什么特别的东西？'
+    ],
+    'firstjob_society': [
+        '那时候就业环境怎么样？',
+        '你的同学和朋友都去做什么了？',
+        '当时最热门的工作是什么？',
+        '有没有感受到经济或社会的变化？',
+        '单位里的氛围怎么样？',
+        '你对当时的社会有什么感受？'
+    ],
+    'firstjob_turning': [
+        '第一份工作有没有带来什么重大改变？',
+        '有没有想过辞职？后来怎么决定的？',
+        '有没有因为工作认识了什么重要的人？',
+        '工作以后你的生活观念有什么变化？',
+        '有没有一次工作中的经历让你重新思考了什么？',
+        '第一份工作你做了多久？为什么离开？'
+    ],
+    'love_marriage_residence': [
+        '恋爱和结婚后你住在哪儿？',
+        '新房是怎么布置的？',
+        '有没有和长辈一起住过？',
+        '你们的第一个家是什么样？',
+        '搬过几次家？',
+        '你理想中的家是什么样的？'
+    ],
+    'love_marriage_family': [
+        '你和另一半是怎么认识的？',
+        '家里人对你们的关系是什么态度？',
+        '结婚前两家人怎么互动？',
+        '婚后和双方父母的关系怎么样？',
+        '有没有因为家庭关系产生过分歧？',
+        '家里人谁对你影响最大？'
+    ],
+    'love_marriage_education': [
+        '对方的教育背景和你有什么不同？',
+        '你们有没有一起学习过什么？',
+        '你有没有因为家庭而放弃过学习机会？',
+        '你怎么看待子女的教育？',
+        '有没有谁为了家庭牺牲了学业？',
+        '你们的家庭有没有读书或学习的习惯？'
+    ],
+    'love_marriage_work': [
+        '婚后工作有什么变化？',
+        '家里谁的经济贡献更大？',
+        '有没有因为工作安排产生过分歧？',
+        '有没有一起做过什么生意或项目？',
+        '家庭开支怎么安排？',
+        '有没有一方为了家庭放弃过工作？'
+    ],
+    'love_marriage_objects': [
+        '定情信物或者结婚礼物有什么？',
+        '有没有一件东西是你们一起挑选的？',
+        '婚纱或者结婚穿的衣服还在吗？',
+        '家里有一件最老的东西是什么？',
+        '有没有一件东西承载了你们的故事？',
+        '搬家时最舍不得丢的是什么？'
+    ],
+    'love_marriage_society': [
+        '那个年代结婚一般是什么样的？',
+        '你们结婚时有什么社会习俗？',
+        '当时周围人对婚姻的看法是什么？',
+        '有没有感受到什么社会变化影响了你们的生活？',
+        '那个年代男女的角色分工是什么样的？',
+        '你们和同年代的其他家庭有什么不同？'
+    ],
+    'love_marriage_turning': [
+        '结婚对你来说意味着什么？',
+        '有没有一个时刻让你觉得自己真的成家了？',
+        '有没有经历过什么考验你们关系的事？',
+        '有没有什么决定是两个人一起做出的？',
+        '有没有一方经历过重大变化？',
+        '回头看，你觉得最关键的转折是什么？'
+    ],
+    'relocation_residence': [
+        '你搬过几次家？',
+        '每次搬家的原因是什么？',
+        '哪次搬家让你印象最深？',
+        '新地方和老地方有什么不同？',
+        '搬家时最辛苦的部分是什么？',
+        '你有没有想过回到以前住过的地方？'
+    ],
+    'relocation_family': [
+        '搬家对家庭关系有什么影响？',
+        '有没有家人因为搬迁而分开？',
+        '离开后和原来的邻居、朋友还联系吗？',
+        '搬家后家里人的分工有什么变化？',
+        '有没有人因为不想搬而产生过分歧？',
+        '孩子们对搬家是什么反应？'
+    ],
+    'relocation_education': [
+        '搬家对你的学业有什么影响？',
+        '转学后适应新学校难吗？',
+        '新地方的教育条件和以前比怎么样？',
+        '有没有因为搬迁而中断过学业？',
+        '新地方有没有什么学习机会是以前没有的？',
+        '你在搬迁中学会了什么？'
+    ],
+    'relocation_work': [
+        '搬迁后你怎么找到工作的？',
+        '新地方的工作和老地方有什么不同？',
+        '有没有因为搬迁而改变了职业方向？',
+        '搬迁时经济上遇到了什么困难？',
+        '新地方的工资和生活水平怎么样？',
+        '你在新地方的工作做得多顺利？'
+    ],
+    'relocation_objects': [
+        '搬家时带走了什么？留下了什么？',
+        '有没有丢掉什么后来很后悔的东西？',
+        '新家是怎么布置的？',
+        '有没有从老家带来的东西一直用到现在？',
+        '搬家时最重或最难搬的东西是什么？',
+        '有没有一样东西代表了你离开的地方？'
+    ],
+    'relocation_society': [
+        '新地方和老地方的社会环境有什么不同？',
+        '当地人对你们这些外来者是什么态度？',
+        '搬迁时社会大背景是什么？',
+        '有没有感受到什么政策影响了你们的搬迁？',
+        '新地方的生活方式和老家有什么不同？',
+        '你觉得自己融入新地方用了多久？'
+    ],
+    'relocation_turning': [
+        '离开故乡对你意味着什么？',
+        '有没有一个瞬间让你特别想家？',
+        '搬迁后你的生活发生了什么根本变化？',
+        '有没有后悔搬过家？',
+        '你觉得搬迁对你的人生轨迹有什么影响？',
+        '如果没有那次搬迁，你觉得生活会怎样？'
+    ],
+    'raising_children_residence': [
+        '孩子们小时候你们住在哪里？',
+        '家里的空间够用吗？',
+        '孩子们有自己的房间吗？',
+        '周围的环境适不适合孩子成长？',
+        '有没有为了孩子上学而搬过家？',
+        '孩子们最喜欢家里的哪个角落？'
+    ],
+    'raising_children_family': [
+        '家里有几个孩子？',
+        '孩子们之间的相处怎么样？',
+        '你觉得最困难的部分是什么？',
+        '家里人怎么分担带孩子的事？',
+        '有没有因为孩子教育产生过分歧？',
+        '你和孩子们的关系后来有什么变化？'
+    ],
+    'raising_children_education': [
+        '孩子们上学的事你是怎么安排的？',
+        '你对他们的学业有什么期待？',
+        '有没有为孩子上学做过什么特别的事？',
+        '孩子的老师你认识吗？',
+        '孩子的学习成绩你怎么看？',
+        '有没有哪件事让你对孩子的教育方式产生了反思？'
+    ],
+    'raising_children_work': [
+        '有孩子以后工作有什么变化？',
+        '怎么平衡工作和带孩子？',
+        '有没有为了孩子换过工作？',
+        '家里的经济状况在孩子成长过程中有什么变化？',
+        '孩子们了解你的工作吗？',
+        '有没有想给他们留下什么？'
+    ],
+    'raising_children_objects': [
+        '孩子们小时候最喜欢的玩具是什么？',
+        '有没有保存什么孩子成长中的东西？',
+        '孩子的第一双鞋、第一件衣服还在吗？',
+        '有没有一件东西是你做给孩子或修给孩子的？',
+        '家庭相册里你最喜欢哪张照片？',
+        '孩子们送过你什么礼物？'
+    ],
+    'raising_children_society': [
+        '那个年代养孩子和社会现在有什么不同？',
+        '学校和社会对孩子的成长有什么影响？',
+        '有没有什么社会事件影响了你的家庭？',
+        '当时的教育政策和现在有什么不同？',
+        '你觉得社会环境对孩子的影响大吗？',
+        '你有没有感受到代际之间的差异？'
+    ],
+    'raising_children_turning': [
+        '养育过程中最大的转折是什么？',
+        '孩子离开家那天你记得什么？',
+        '有没有什么事让你觉得自己作为家长成长了？',
+        '有没有因为孩子而改变过自己？',
+        '回头看，你觉得最重要的是什么？',
+        '有没有哪一刻让你特别骄傲或特别担心？'
+    ],
+    'middle_late_residence': [
+        '中晚年你住在哪里？',
+        '和谁一起住？',
+        '现在的居住条件和以前比怎么样？',
+        '你对现在的住处满意吗？',
+        '有没有想过搬到别的地方？',
+        '你理想中的晚年住所是什么样的？'
+    ],
+    'middle_late_family': [
+        '现在和家人之间的关系怎么样？',
+        '子女们经常回来看你吗？',
+        '有没有什么家庭矛盾一直没解决？',
+        '随着年龄增长，你看重的东西有什么变化？',
+        '和孙辈的关系怎么样？',
+        '家里有什么让你最放心不下的？'
+    ],
+    'middle_late_education': [
+        '中晚年有没有学过什么新东西？',
+        '你觉得学习是一辈子的事吗？',
+        '有没有上过老年大学或参加什么课程？',
+        '你有没有教过年轻人什么？',
+        '现在的资讯和知识你跟得上吗？',
+        '你觉得自己的认知发生了什么变化？'
+    ],
+    'middle_late_work': [
+        '你工作了多少年？',
+        '最让你有成就感的工作经历是什么？',
+        '有没有做过什么让你特别自豪的事？',
+        '现在还做什么吗？',
+        '一辈子的工作经历教会了你什么？',
+        '如果重新选择，你会做什么工作？'
+    ],
+    'middle_late_objects': [
+        '家里有没有什么东西是你特别珍视的？',
+        '有没有开始整理或淘汰旧物？',
+        '有什么东西你想留给下一代？',
+        '有没有什么东西丢了以后特别后悔？',
+        '现在的生活中什么东西最重要？',
+        '有没有什么东西能让你想起年轻的时候？'
+    ],
+    'middle_late_society': [
+        '你觉得这个社会变化大吗？',
+        '有什么变化是你特别有感触的？',
+        '你觉得现在的生活和年轻时比怎么样？',
+        '有没有什么社会现象让你担忧？',
+        '你对年轻人有什么想说的？',
+        '你觉得什么是最重要的社会进步？'
+    ],
+    'middle_late_turning': [
+        '中晚年有没有经历什么重大转折？',
+        '有没有什么事让你重新审视了自己的人生？',
+        '健康状况对你有什么影响？',
+        '有没有什么是你到这个年纪才理解的？',
+        '回头看，你觉得自己最正确的决定是什么？',
+        '有没有什么遗憾？'
+    ],
+    'retirement_residence': [
+        '退休后你住在哪里？',
+        '每天的生活轨迹是什么样的？',
+        '住的地方周围有什么设施？',
+        '有没有想过换个地方住？',
+        '你的房间里有什么特别的东西？',
+        '你觉得现在的居住环境适合养老吗？'
+    ],
+    'retirement_family': [
+        '退休后和家人的相处有什么变化？',
+        '子女们的现状你了解多少？',
+        '家庭聚会多吗？一般在什么场合？',
+        '有没有什么家庭传统是你希望保持的？',
+        '你和伴侣的相处方式和以前有什么不同？',
+        '有没有什么是你希望和家人一起做的？'
+    ],
+    'retirement_education': [
+        '退休后有没有继续学习？',
+        '有没有什么一直想学但没机会学的东西？',
+        '你平时看什么书或什么节目？',
+        '有没有什么知识是你到退休后才知道的？',
+        '你怎么看待现在年轻人的学习方式？',
+        '有没有什么技能你想传给下一代？'
+    ],
+    'retirement_work': [
+        '退休前的工作你做了多少年？',
+        '退休时是什么心情？',
+        '退休后有没有继续做些力所能及的事？',
+        '你觉得自己一辈子的工作有什么意义？',
+        '有没有什么工作上的经验想告诉年轻人？',
+        '退休后每天怎么安排时间？'
+    ],
+    'retirement_objects': [
+        '退休时有没有保留什么和工作有关的东西？',
+        '有没有开始写回忆录或整理老照片？',
+        '有什么东西你觉得应该在去世前交代好？',
+        '家里有什么东西是别人送的、你最珍惜的？',
+        '你有没有收集什么？',
+        '有没有什么东西代表了你一生的工作？'
+    ],
+    'retirement_society': [
+        '退休后你感受到的最大社会变化是什么？',
+        '你觉得现在的生活便利吗？',
+        '有没有什么新技术你学会了或者没学会？',
+        '你怎么看待现在社会的节奏？',
+        '有没有什么社会变化让你感慨？',
+        '你对国家的发展有什么感受？'
+    ],
+    'retirement_turning': [
+        '退休对你来说意味着什么？',
+        '退休后有没有什么新的开始？',
+        '有没有什么事是退休后才想明白的？',
+        '你怎么定义自己人生的"成功"？',
+        '有没有什么事让你觉得这一生值了？',
+        '如果能对年轻时的自己说一句话，你会说什么？'
+    ]
+};
+
+/* ===== Generate Life Grid ===== */
+var currentGridQuestions = [];
+
+function generateLifeGrid() {
+    var stage = document.getElementById('stageSelect').value;
+    var topic = document.getElementById('topicSelect').value;
+    var resultDiv = document.getElementById('lifeGridResult');
+    var titleEl = document.getElementById('lifeGridTitle');
+    var listEl = document.getElementById('lifeGridQuestions');
+
+    if (!stage || !topic) {
+        showToast('请先选择人生阶段和主题');
+        return;
+    }
+
+    var key = stage + '_' + topic;
+    var qs = questions[key];
+
+    if (!qs || qs.length === 0) {
+        showToast('暂无该组合的提纲');
+        return;
+    }
+
+    currentGridQuestions = qs;
+    titleEl.textContent = stageLabels[stage] + ' · ' + topicLabels[topic];
+    listEl.innerHTML = '';
+    for (var i = 0; i < qs.length; i++) {
+        var li = document.createElement('li');
+        li.textContent = qs[i];
+        listEl.appendChild(li);
+    }
+
+    resultDiv.style.display = 'block';
+    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function useGridOutline() {
+    if (currentGridQuestions.length === 0) return;
+    var text = currentGridQuestions.join('\n');
+    var sourceMarker = '【记忆来源】\n□ 本人亲历\n□ 家人转述\n□ 大约记得\n□ 需要核实\n\n';
+    localStorage.setItem('memoryCabinetStarter', sourceMarker + text);
+    window.location.href = 'index.html';
+}
+
+/* ===== Init: hide interview-only content ===== */
+(function() {
+    var interviewContent = document.querySelectorAll('.mode-interview');
+    interviewContent.forEach(function(el) { el.style.display = 'none'; });
+})();
 </script>
 </body>
 </html>
