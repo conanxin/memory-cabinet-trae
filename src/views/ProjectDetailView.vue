@@ -89,6 +89,50 @@
         </div>
       </section>
 
+      <!-- Interview Records -->
+      <section class="card info-section">
+        <div class="section-header">
+          <h2 class="section-title">访谈记录</h2>
+          <span class="section-count">{{ detail.interviews.length }} 次访谈</span>
+        </div>
+
+        <div v-if="detail.interviews.length === 0" class="empty-interviews">
+          <p>暂无访谈记录</p>
+          <router-link
+            :to="{ name: 'interview-create', params: { projectId: detail.project.id } }"
+            class="btn btn-primary"
+          >开始第一次访谈</router-link>
+        </div>
+
+        <div v-else class="interview-list">
+          <router-link
+            class="interview-list-header"
+            :to="{ name: 'interview-create', params: { projectId: detail.project.id } }"
+          >
+            <span class="btn btn-primary btn-sm">新增访谈</span>
+          </router-link>
+
+          <router-link
+            v-for="iv in detail.interviews"
+            :key="iv.id"
+            class="interview-item"
+            :to="{ name: 'interview-detail', params: { projectId: detail.project.id, interviewId: iv.id } }"
+          >
+            <div class="interview-item-main">
+              <div class="interview-item-title">{{ iv.title }}</div>
+              <div class="interview-item-meta">
+                <span>{{ formatDate(iv.interviewDate) }}</span>
+                <span v-if="iv.location">· {{ iv.location }}</span>
+              </div>
+            </div>
+            <div class="interview-item-side">
+              <div class="interview-item-count">{{ countChars(iv.originalText) }} 字</div>
+              <div class="interview-item-time">{{ formatDate(iv.updatedAt) }}</div>
+            </div>
+          </router-link>
+        </div>
+      </section>
+
       <!-- Time Info -->
       <section class="card info-section">
         <h2 class="section-title">项目信息</h2>
@@ -149,6 +193,10 @@ function formatDate(iso: string): string {
   })
 }
 
+function countChars(text: string): number {
+  return text ? text.length : 0
+}
+
 async function handleExport() {
   if (!detail.value) return
   try {
@@ -196,6 +244,18 @@ async function handleDelete() {
   margin-bottom: 16px;
 }
 
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.section-count {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
 .info-row {
   display: flex;
   justify-content: space-between;
@@ -224,6 +284,86 @@ async function handleDelete() {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.empty-interviews {
+  text-align: center;
+  padding: 24px 16px;
+  color: var(--text-muted);
+}
+
+.empty-interviews p {
+  margin-bottom: 16px;
+}
+
+.interview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.interview-list-header {
+  align-self: flex-end;
+  margin-bottom: 4px;
+  text-decoration: none;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.interview-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+
+.interview-item:hover {
+  border-color: var(--accent, #1976d2);
+}
+
+.interview-item-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.interview-item-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.interview-item-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.interview-item-side {
+  text-align: right;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.interview-item-count {
+  font-size: 13px;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.interview-item-time {
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
 .action-buttons {

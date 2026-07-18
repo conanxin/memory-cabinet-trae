@@ -24,6 +24,18 @@ const router = createRouter({
       props: true,
     },
     {
+      path: '/projects/:projectId/interviews/new',
+      name: 'interview-create',
+      component: () => import('@/views/InterviewCreateView.vue'),
+      props: true,
+    },
+    {
+      path: '/projects/:projectId/interviews/:interviewId',
+      name: 'interview-detail',
+      component: () => import('@/views/InterviewDetailView.vue'),
+      props: true,
+    },
+    {
       path: '/import',
       name: 'import',
       component: () => import('@/views/ImportView.vue'),
