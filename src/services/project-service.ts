@@ -5,9 +5,11 @@ import { createConsent } from '@/models/consent'
 import { projectRepository } from '@/repositories/project-repository'
 import { narratorRepository } from '@/repositories/narrator-repository'
 import { consentRepository } from '@/repositories/consent-repository'
+import { interviewSessionRepository } from '@/repositories/interview-session-repository'
 import type { Project } from '@/models/project'
 import type { Narrator } from '@/models/narrator'
 import type { Consent } from '@/models/consent'
+import type { InterviewSession } from '@/models/interview-session'
 
 export interface CreateProjectInput {
   projectTitle: string
@@ -23,6 +25,7 @@ export interface ProjectDetail {
   project: Project
   narrator: Narrator
   consent: Consent
+  interviews: InterviewSession[]
 }
 
 export const projectService = {
@@ -62,7 +65,7 @@ export const projectService = {
       await db.consents.add(consent)
     })
 
-    return { project, narrator, consent }
+    return { project, narrator, consent, interviews: [] }
   },
 
   async listProjects(): Promise<Project[]> {
@@ -79,15 +82,25 @@ export const projectService = {
     const consent = await consentRepository.getByProjectId(projectId)
     if (!consent) return null
 
-    return { project, narrator, consent }
+    const interviews = await interviewSessionRepository.listByProjectId(projectId)
+
+    return { project, narrator, consent, interviews }
   },
 
   async deleteProject(projectId: string): Promise<void> {
-    await db.transaction('rw', db.projects, db.narrators, db.consents, async () => {
-      await db.narrators.where('projectId').equals(projectId).delete()
-      await db.consents.where('projectId').equals(projectId).delete()
-      await db.projects.delete(projectId)
-    })
+    await db.transaction(
+      'rw',
+      db.projects,
+      db.narrators,
+      db.consents,
+      db.interviews,
+      async () => {
+        await db.interviews.where('projectId').equals(projectId).delete()
+        await db.narrators.where('projectId').equals(projectId).delete()
+        await db.consents.where('projectId').equals(projectId).delete()
+        await db.projects.delete(projectId)
+      },
+    )
   },
 
   async projectTitleExists(title: string): Promise<boolean> {

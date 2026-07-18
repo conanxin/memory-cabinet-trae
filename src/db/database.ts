@@ -6,6 +6,7 @@ class MemoryCabinetDatabase extends Dexie {
   projects!: Dexie.Table<import('@/models/project').Project, string>
   narrators!: Dexie.Table<import('@/models/narrator').Narrator, string>
   consents!: Dexie.Table<import('@/models/consent').Consent, string>
+  interviews!: Dexie.Table<import('@/models/interview-session').InterviewSession, string>
 
   constructor() {
     super(DB_NAME)
