@@ -38,7 +38,7 @@
       <form class="card form-card" @submit.prevent="handleSave">
         <div class="form-group">
           <label class="form-label">访谈标题 <span class="form-required">*</span></label>
-          <input v-model="form.title" type="text" class="form-input" required />
+          <input id="interview-title" v-model="form.title" type="text" class="form-input" required />
         </div>
 
         <div class="form-group">
@@ -48,22 +48,22 @@
 
         <div class="form-group">
           <label class="form-label">地点</label>
-          <input v-model="form.location" type="text" class="form-input" />
+          <input id="interview-location" v-model="form.location" type="text" class="form-input" />
         </div>
 
         <div class="form-group">
           <label class="form-label">采访者</label>
-          <input v-model="form.interviewerName" type="text" class="form-input" />
+          <input id="interview-interviewer" v-model="form.interviewerName" type="text" class="form-input" />
         </div>
 
         <div class="form-group">
           <label class="form-label">原始口述文字</label>
-          <textarea v-model="form.originalText" class="form-textarea" rows="10"></textarea>
+          <textarea id="interview-original-text" v-model="form.originalText" class="form-textarea" rows="10"></textarea>
         </div>
 
         <div class="form-group">
           <label class="form-label">备注</label>
-          <textarea v-model="form.notes" class="form-textarea" rows="4"></textarea>
+          <textarea id="interview-notes" v-model="form.notes" class="form-textarea" rows="4"></textarea>
         </div>
 
         <div class="form-actions">
@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { projectService } from '@/services/project-service'
 import { interviewSessionService } from '@/services/interview-session-service'

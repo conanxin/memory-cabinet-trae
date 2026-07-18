@@ -17,7 +17,6 @@ export function createConsent(partial: Partial<Consent> & { projectId: string })
   const now = new Date().toISOString()
   return {
     id: crypto.randomUUID(),
-    projectId: partial.projectId,
     consentToRecord: false,
     consentToStoreQuotes: false,
     consentToStorePhotos: false,

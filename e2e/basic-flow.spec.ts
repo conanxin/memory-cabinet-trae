@@ -17,7 +17,7 @@ test.describe('v0.2A Basic Flow', () => {
     await page.getByRole('button', { name: '创建项目' }).click()
     await expect(page.getByRole('heading', { name: '外婆的裁缝岁月' })).toBeVisible()
     await expect(page.getByText('王秀兰')).toBeVisible()
-    await expect(page.getByText('外婆')).toBeVisible()
+    await expect(page.getByText('外婆', { exact: true })).toBeVisible()
     await expect(page.getByText('1928 年')).toBeVisible()
   })
 
@@ -29,7 +29,7 @@ test.describe('v0.2A Basic Flow', () => {
     await expect(page.getByRole('heading', { name: '持久化测试' })).toBeVisible()
     await page.reload()
     await page.getByRole('link', { name: '项目列表' }).click()
-    await expect(page.getByText('持久化测试')).toBeVisible()
+    await expect(page.getByRole('heading', { name: '持久化测试' })).toBeVisible()
   })
 
   test('project list shows projects', async ({ page }) => {
@@ -61,6 +61,7 @@ test.describe('v0.2A Basic Flow', () => {
     await page.getByLabel('同意保存原话').check()
     await page.getByLabel('允许家庭查看').check()
     await page.getByRole('button', { name: '创建项目' }).click()
+    await page.waitForSelector('.consent-badge')
     const yesCount = await page.locator('.consent-badge--yes').count()
     const noCount = await page.locator('.consent-badge--no').count()
     expect(yesCount).toBe(3)
@@ -131,7 +132,7 @@ test.describe('Import/Export', () => {
     await page.getByRole('button', { name: '开始导入' }).click()
     await expect(page.getByText('导入成功')).toBeVisible()
     await page.getByRole('link', { name: '查看项目' }).click()
-    await expect(page.getByText('导入副本')).toBeVisible()
+    await expect(page.getByRole('heading', { name: '导入导出测试（导入副本）' })).toBeVisible()
     await expect(page.getByText('王秀兰')).toBeVisible()
   })
 
@@ -152,8 +153,8 @@ test.describe('Import/Export', () => {
     await page.getByRole('button', { name: '开始导入' }).click()
     await expect(page.getByText('导入成功')).toBeVisible()
     await page.goto('/#/projects')
-    await expect(page.getByText('原项目保留测试')).toBeVisible()
-    await expect(page.getByText('导入副本')).toBeVisible()
+    await expect(page.getByRole('heading', { name: '原项目保留测试', exact: true })).toBeVisible()
+    await expect(page.getByRole('heading', { name: '导入导出测试（导入副本）' })).toBeVisible()
   })
 
   test('delete imported copy', async ({ page }) => {
@@ -176,7 +177,7 @@ test.describe('Import/Export', () => {
     await page.getByRole('button', { name: '确认删除' }).click()
     await page.goto('/#/projects')
     await expect(page.getByText('删除副本测试')).toBeVisible()
-    await expect(page.getByText('导入副本')).not.toBeVisible()
+    await expect(page.getByRole('heading', { name: '导入导出测试（导入副本）' })).not.toBeVisible()
   })
 })
 

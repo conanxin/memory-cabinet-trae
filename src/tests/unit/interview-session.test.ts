@@ -7,7 +7,6 @@ import { projectService } from '@/services/project-service'
 import { interviewSessionService } from '@/services/interview-session-service'
 import { interviewSessionRepository } from '@/repositories/interview-session-repository'
 import { importExportService } from '@/services/import-export-service'
-import { createInterviewSession } from '@/models/interview-session'
 import type { InterviewSession } from '@/models/interview-session'
 
 beforeEach(async () => {

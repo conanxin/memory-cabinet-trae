@@ -2,10 +2,10 @@ import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
   testDir: './e2e',
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  retries: 0,
+  workers: 1,
   reporter: 'html',
   use: {
     baseURL: 'http://localhost:4173',
@@ -20,6 +20,7 @@ export default defineConfig({
   webServer: {
     command: 'npm run build && npm run preview',
     port: 4173,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
+    timeout: 120000,
   },
 })

@@ -12,9 +12,7 @@ export function createProject(partial: Partial<Project> & { title: string; narra
   const now = new Date().toISOString()
   return {
     id: crypto.randomUUID(),
-    title: partial.title,
-    description: partial.description ?? '',
-    narratorId: partial.narratorId,
+    description: '',
     schemaVersion: 1,
     createdAt: now,
     updatedAt: now,

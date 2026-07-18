@@ -33,8 +33,7 @@
         <div class="form-group">
           <label class="form-label">访谈标题 <span class="form-required">*</span></label>
           <input
-            v-model="form.title"
-            type="text"
+            id="interview-title" v-model="form.title" type="text"
             class="form-input"
             placeholder="例如：第一次访谈"
             required
@@ -54,8 +53,7 @@
         <div class="form-group">
           <label class="form-label">地点</label>
           <input
-            v-model="form.location"
-            type="text"
+            id="interview-location" v-model="form.location" type="text"
             class="form-input"
             placeholder="例如：家中"
           />
@@ -64,8 +62,7 @@
         <div class="form-group">
           <label class="form-label">采访者</label>
           <input
-            v-model="form.interviewerName"
-            type="text"
+            id="interview-interviewer" v-model="form.interviewerName" type="text"
             class="form-input"
             placeholder="例如：访谈者姓名"
           />
@@ -74,8 +71,7 @@
         <div class="form-group">
           <label class="form-label">原始口述文字</label>
           <textarea
-            v-model="form.originalText"
-            class="form-textarea"
+            id="interview-original-text" v-model="form.originalText" class="form-textarea"
             rows="8"
             placeholder="输入本次访谈的原始口述内容..."
           ></textarea>
@@ -84,8 +80,7 @@
         <div class="form-group">
           <label class="form-label">备注</label>
           <textarea
-            v-model="form.notes"
-            class="form-textarea"
+            id="interview-notes" v-model="form.notes" class="form-textarea"
             rows="4"
             placeholder="采访者备注或其他说明..."
           ></textarea>
@@ -150,7 +145,7 @@ async function handleSave() {
   try {
     const pid = project.value.id
     const interviewDate = new Date(form.value.interviewDate).toISOString()
-    const session = await interviewSessionService.createInterview({
+    await interviewSessionService.createInterview({
       projectId: pid,
       title: form.value.title,
       interviewDate,

@@ -12,12 +12,27 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, onBeforeUnmount } from 'vue'
+
+function handleKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape') {
+    emit('cancel')
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', handleKeydown)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', handleKeydown)
+})
 defineProps<{
   title: string
   message: string
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   confirm: []
   cancel: []
 }>()

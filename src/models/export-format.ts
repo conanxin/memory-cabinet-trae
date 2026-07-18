@@ -40,7 +40,7 @@ export function isExportFormat(data: unknown): data is ExportFormat {
     if (typeof consent[field] !== 'boolean') return false
   }
 
-  // Validate interviews array for v2
+  // Validate interviews array for v2 - must be an array
   if (obj.schemaVersion === 2) {
     if (!Array.isArray(obj.interviews)) return false
   }
