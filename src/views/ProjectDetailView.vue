@@ -134,7 +134,26 @@
       </section>
 
       <!-- Time Info -->
+      
       <section class="card info-section">
+        <div class="section-header">
+          <h2 class="section-title">记忆卡片</h2>
+          <span class="section-count">{{ memoryCounts.total }} 张</span>
+        </div>
+
+        <div class="memory-stats">
+          <span class="stat-chip stat-chip--draft">草稿 {{ memoryCounts.draft }}</span>
+          <span class="stat-chip stat-chip--confirmed">已确认 {{ memoryCounts.confirmed }}</span>
+          <span class="stat-chip stat-chip--excluded">已排除 {{ memoryCounts.excluded }}</span>
+        </div>
+
+        <router-link
+          :to="{ name: 'memory-list', params: { projectId: detail.project.id } }"
+          class="btn btn-primary btn-sm memory-view-all"
+        >查看全部记忆卡片</router-link>
+      </section>
+
+<section class="card info-section">
         <h2 class="section-title">项目信息</h2>
         <div class="info-row">
           <span class="info-label">创建时间</span>
@@ -165,10 +184,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { projectService, type ProjectDetail } from '@/services/project-service'
 import { importExportService } from '@/services/import-export-service'
+import { memoryItemService } from '@/services/memory-item-service'
+
 import ConfirmDialog from '@/components/ConfirmDialog.vue'
 
 const props = defineProps<{ projectId: string }>()
@@ -176,12 +197,23 @@ const router = useRouter()
 const route = useRoute()
 
 const loading = ref(true)
+const memoryItems = ref<import('@/models/memory-item').MemoryItem[]>([])
+const memoryCounts = computed(() => {
+  const c = { total: memoryItems.value.length, draft: 0, confirmed: 0, excluded: 0 }
+  for (const mi of memoryItems.value) {
+    if (mi.reviewStatus === 'draft') c.draft++
+    else if (mi.reviewStatus === 'confirmed') c.confirmed++
+    else if (mi.reviewStatus === 'excluded') c.excluded++
+  }
+  return c
+})
 const detail = ref<ProjectDetail | null>(null)
 const showDeleteConfirm = ref(false)
 
 onMounted(async () => {
   const pid = props.projectId || (route.params.projectId as string)
   detail.value = await projectService.getProjectDetail(pid)
+  memoryItems.value = await memoryItemService.listByProjectId(pid)
   loading.value = false
 })
 
@@ -372,4 +404,14 @@ async function handleDelete() {
   justify-content: center;
   padding: 20px 0;
 }
-</style>
+
+.memory-stats {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;
+}
+.stat-chip {
+  padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: 500;
+}
+.stat-chip--draft { background: #fff3e0; color: #e65100; }
+.stat-chip--confirmed { background: #e8f5e9; color: #2e7d32; }
+.stat-chip--excluded { background: #f5f5f5; color: #616161; }
+.memory-view-all { margin-top: 4px; }</style>

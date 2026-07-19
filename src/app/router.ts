@@ -24,6 +24,24 @@ const router = createRouter({
       props: true,
     },
     {
+      path: '/projects/:projectId/memories',
+      name: 'memory-list',
+      component: () => import('@/views/MemoryItemListView.vue'),
+      props: true,
+    },
+    {
+      path: '/projects/:projectId/memories/new',
+      name: 'memory-create',
+      component: () => import('@/views/MemoryItemCreateView.vue'),
+      props: true,
+    },
+    {
+      path: '/projects/:projectId/memories/:memoryItemId',
+      name: 'memory-detail',
+      component: () => import('@/views/MemoryItemDetailView.vue'),
+      props: true,
+    },
+    {
       path: '/projects/:projectId/interviews/new',
       name: 'interview-create',
       component: () => import('@/views/InterviewCreateView.vue'),
