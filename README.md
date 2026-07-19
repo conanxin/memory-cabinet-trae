@@ -1,46 +1,48 @@
-# 时光展柜 v0.2A
+# 时光展柜 Memory Cabinet v0.2C1
 
-家庭口述史记录工具，本地优先。
+**版本**: 0.2.0-alpha.3
 
-## 重要说明
+## 项目说明
 
-- **本地优先**：所有数据保存在浏览器本地 IndexedDB 中，不会上传到任何服务器。
-- **当前没有 AI**：本版本不包含任何 AI 功能。
-- **当前没有账号**：本版本不需要登录，没有账号系统。
-- **当前没有云同步**：数据仅在当前浏览器中可用，不会同步到其他设备。
-- **数据可能丢失**：清理浏览器数据可能导致项目丢失。
-- **请定期导出备份**：使用导出功能将项目保存为 JSON 文件。
-- **独立项目**：本仓库与比赛稳定版 `memory-cabinet-trae` 是两个完全独立的项目。
+本项目是"时光展柜"口述历史记忆卡片系统的恢复重建版本。
+
+- **MemoryItem 数据层和视图层**：均为契约驱动的人工重新实现，基于测试契约和数据结构规范从零构建
+- **不是原仓库的精确恢复**：原源码和完整 Git 历史未找到，本仓库为重建产物
+- **当前没有 AI 能力**：所有卡片创建、编辑均为纯人工操作
+- **Exhibition 尚未实现**：展柜展示功能计划在后续版本实现
 
 ## 功能
 
-- 创建口述史项目，记录主要讲述者信息
-- 细粒度同意状态管理（5 项同意）
-- IndexedDB 本地持久化，页面刷新后恢复
-- JSON 导出/导入（信封结构，导入为新项目）
-- 删除本地项目
+### 六种记忆卡片类型
+1. event - 事件
+2. person - 人物
+3. place - 地点
+4. object - 物品
+5. 	ime - 时间
+6. concept - 概念
+
+### 原文证据链
+- 每张卡片都关联到访谈原文的字符范围（sourceStart / sourceEnd）
+- 创建时自动从 IndexedDB 重新截取原文
+- 支持查看原文上下文和来源访谈链接
+
+### 版本兼容
+- **schemaVersion 1**：兼容导入（仅项目和访谈）
+- **schemaVersion 2**：兼容导入（项目+访谈+会话状态）
+- **schemaVersion 3**：完整支持（项目+访谈+记忆卡片），导入时所有 ID 重新生成，引用正确重写
 
 ## 技术栈
-
 - Vue 3 + TypeScript + Vite
-- Vue Router 4
-- Dexie.js（IndexedDB）
+- IndexedDB (Dexie.js)
 - Vitest（单元测试）
 - Playwright（E2E 测试）
 
-## 开发
-
-```bash
+## 开发命令
+`ash
 npm install
-npm run dev        # 启动开发服务器
-npm run typecheck  # TypeScript 类型检查
-npm run test       # 运行单元测试
-npm run test:e2e   # 运行 E2E 测试
-npm run build      # 构建
-```
-
-## 与比赛稳定版的关系
-
-本仓库（v0.2A）是全新的产品化代码项目，不依赖、不修改、不迁移比赛稳定版。
-
-比赛稳定版地址：`D:\Project\memory-cabinet-trae`
+npm run typecheck   # TypeScript 类型检查
+npm run test        # 单元测试 (Vitest)
+npm run build       # 生产构建
+npm run test:e2e    # E2E 测试 (Playwright)
+npm run dev         # 开发服务器
+`
