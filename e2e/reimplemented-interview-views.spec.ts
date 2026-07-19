@@ -141,7 +141,7 @@ test('20: delete project cascades interviews', async ({ page }) => {
   await expect(page.locator('.info-value').filter({ hasText: PROJECT_NAME })).not.toBeVisible()
 })
 
-test('21: export schemaVersion 2', async ({ page }) => {
+test('21: export schemaVersion 3 with memoryItems', async ({ page }) => {
   await createProject(page, PROJECT_NAME)
   await page.getByRole('link', { name: '开始第一次访谈' }).click()
   await page.waitForLoadState('networkidle')
@@ -154,9 +154,11 @@ test('21: export schemaVersion 2', async ({ page }) => {
   const dlPath = await download.path()
   expect(dlPath).toBeTruthy()
   const data = JSON.parse(fs.readFileSync(dlPath!, 'utf8'))
-  expect(data.schemaVersion).toBe(2)
+  expect(data.schemaVersion).toBe(3)
   expect(Array.isArray(data.interviews)).toBe(true)
   expect(data.interviews.length).toBe(1)
+  expect(Array.isArray(data.memoryItems)).toBe(true)
+  expect(data.memoryItems.length).toBe(0)
 })
 
 test('22-23: import v1 empty interviews, import v2 restores interviews', async ({ page }) => {

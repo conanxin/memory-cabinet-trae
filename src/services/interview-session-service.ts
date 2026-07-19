@@ -1,5 +1,7 @@
 import { interviewSessionRepository } from '@/repositories/interview-session-repository'
 import type { InterviewSession } from '@/models/interview-session'
+import { db } from '@/db/database'
+import { memoryItemRepository } from '@/repositories/memory-item-repository'
 
 export interface CreateInterviewInput {
   projectId: string
@@ -50,6 +52,13 @@ export const interviewSessionService = {
   },
 
   async deleteInterview(id: string): Promise<void> {
-    await interviewSessionRepository.delete(id)
+    await db.transaction(
+      'rw',
+      [db.interviews, db.memoryItems],
+      async () => {
+        await memoryItemRepository.deleteByInterviewSessionId(id)
+        await interviewSessionRepository.delete(id)
+      },
+    )
   },
 }

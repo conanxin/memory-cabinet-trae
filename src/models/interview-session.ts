@@ -16,7 +16,7 @@ export function createInterviewSession(
 ): InterviewSession {
   const now = new Date().toISOString()
   return {
-    id: crypto.randomUUID(),
+    id: partial.id ?? crypto.randomUUID(),
     projectId: partial.projectId,
     title: partial.title,
     interviewDate: partial.interviewDate ?? now,

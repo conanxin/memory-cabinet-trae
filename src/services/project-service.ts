@@ -90,11 +90,9 @@ export const projectService = {
   async deleteProject(projectId: string): Promise<void> {
     await db.transaction(
       'rw',
-      db.projects,
-      db.narrators,
-      db.consents,
-      db.interviews,
+      [db.projects, db.narrators, db.consents, db.interviews, db.memoryItems],
       async () => {
+        await db.memoryItems.where('projectId').equals(projectId).delete()
         await db.interviews.where('projectId').equals(projectId).delete()
         await db.narrators.where('projectId').equals(projectId).delete()
         await db.consents.where('projectId').equals(projectId).delete()

@@ -1,10 +1,19 @@
+// MANUAL_PATCH_FROM_DOCUMENT_CONTRACT
+// Added schemaVersion 3 with memoryItems support
+
 import { db } from '@/db/database'
 import { createProject } from '@/models/project'
 import { createNarrator } from '@/models/narrator'
 import { createConsent } from '@/models/consent'
 import { createInterviewSession } from '@/models/interview-session'
-import { isExportFormat, type ExportFormatV2 } from '@/models/export-format'
+import { isExportFormat, type ExportFormatV3 } from '@/models/export-format'
 import { projectService } from './project-service'
+import { memoryItemRepository } from '@/repositories/memory-item-repository'
+import {
+  isValidMemoryItemType, isValidSourceType, isValidCertainty,
+  isValidVisibility, isValidReviewStatus,
+} from '@/models/memory-item'
+import type { MemoryItem } from '@/models/memory-item'
 
 function sanitizeFilename(name: string): string {
   return name.replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').replace(/\s+/g, ' ').trim()
@@ -29,18 +38,22 @@ export const importExportService = {
 
     const { project, narrator, consent, interviews } = detail
 
-    // Sort interviews by interviewDate ascending for export
     const sortedInterviews = [...interviews].sort((a, b) => a.interviewDate.localeCompare(b.interviewDate))
 
-    const exportData: ExportFormatV2 = {
+    // Fetch memory items for v3 export
+    const memoryItems = await memoryItemRepository.listByProjectId(projectId)
+    const sortedMemoryItems = [...memoryItems].sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+
+    const exportData: ExportFormatV3 = {
       format: 'memory-cabinet-project',
-      schemaVersion: 2,
-      appVersion: '0.2.0-alpha.2',
+      schemaVersion: 3,
+      appVersion: '0.2.0-alpha.3',
       exportedAt: new Date().toISOString(),
-      project: { ...project, schemaVersion: 2 },
+      project: { ...project, schemaVersion: 3 },
       narrator,
       consent,
       interviews: sortedInterviews,
+      memoryItems: sortedMemoryItems,
     }
 
     const json = JSON.stringify(exportData, null, 2)
@@ -76,18 +89,20 @@ export const importExportService = {
       if (obj && obj.format !== 'memory-cabinet-project') {
         return { success: false, error: '文件格式不正确，此文件不是时光展柜的导出文件。' }
       }
-      if (obj && obj.schemaVersion !== 1 && obj.schemaVersion !== 2) {
-        return { success: false, error: `不支持的版本号 ${obj?.schemaVersion}，当前仅支持版本 1 和 2。` }
+      if (obj && obj.schemaVersion !== 1 && obj.schemaVersion !== 2 && obj.schemaVersion !== 3) {
+        return { success: false, error: `不支持的版本号 ${obj?.schemaVersion}，当前仅支持版本 1、2 和 3。` }
       }
-      // v2 without interviews or other structural issues
-      if (obj && obj.schemaVersion === 2 && !Array.isArray((obj as Record<string, unknown>).interviews)) {
-        return { success: false, error: '导入文件格式错误：版本 2 必须包含访谈数组。' }
+      if (obj && (obj.schemaVersion === 2 || obj.schemaVersion === 3) && !Array.isArray((obj as Record<string, unknown>).interviews)) {
+        return { success: false, error: '导入文件格式错误：版本 2 或 3 必须包含访谈数组。' }
+      }
+      if (obj && obj.schemaVersion === 3 && !Array.isArray((obj as Record<string, unknown>).memoryItems)) {
+        return { success: false, error: '导入文件格式错误：版本 3 必须包含记忆卡片数组。' }
       }
       return { success: false, error: '导入文件格式错误，请检查文件是否来自时光展柜的导出。' }
     }
 
-    // Validate interview data for v2 (deep validation)
-    if (data.schemaVersion === 2 && data.interviews) {
+    // Validate interview data for v2/v3 (deep validation)
+    if ((data.schemaVersion === 2 || data.schemaVersion === 3) && data.interviews) {
       for (const iv of data.interviews) {
         if (!iv.title || typeof iv.title !== 'string') {
           return { success: false, error: '访谈标题格式无效，至少一条访谈缺少标题。' }
@@ -104,8 +119,66 @@ export const importExportService = {
       }
     }
 
+    // Validate memory items for v3
+    if (data.schemaVersion === 3 && data.memoryItems) {
+      // Build a map from old interview IDs to their originalText for validation
+      const oldInterviewMap = new Map<string, { originalText: string }>()
+      if (data.interviews) {
+        for (const iv of data.interviews) {
+          oldInterviewMap.set(iv.id, { originalText: iv.originalText ?? '' })
+        }
+      }
+
+      for (const mi of data.memoryItems) {
+        if (!mi.id || typeof mi.id !== 'string') {
+          return { success: false, error: '记忆卡片ID无效。' }
+        }
+        if (!mi.title || typeof mi.title !== 'string') {
+          return { success: false, error: '记忆卡片标题无效。' }
+        }
+        if (!isValidMemoryItemType(mi.type)) {
+          return { success: false, error: `记忆卡片类型无效：${mi.type}。` }
+        }
+        if (!isValidSourceType(mi.sourceType)) {
+          return { success: false, error: `记忆卡片来源类型无效：${mi.sourceType}。` }
+        }
+        if (!isValidCertainty(mi.certainty)) {
+          return { success: false, error: `记忆卡片可信度无效：${mi.certainty}。` }
+        }
+        if (!isValidVisibility(mi.visibility)) {
+          return { success: false, error: `记忆卡片可见性无效：${mi.visibility}。` }
+        }
+        if (!isValidReviewStatus(mi.reviewStatus)) {
+          return { success: false, error: `记忆卡片审核状态无效：${mi.reviewStatus}。` }
+        }
+
+        // Validate referenced interview exists
+        const referencedInterview = oldInterviewMap.get(mi.interviewSessionId)
+        if (!referencedInterview) {
+          return { success: false, error: '记忆卡片引用的访谈不存在。' }
+        }
+
+        // Validate source range
+        const hasStart = mi.sourceStart !== null && mi.sourceStart !== undefined
+        const hasEnd = mi.sourceEnd !== null && mi.sourceEnd !== undefined
+        if (hasStart !== hasEnd) {
+          return { success: false, error: '记忆卡片的 sourceStart 和 sourceEnd 必须同时提供或同时为 null。' }
+        }
+        if (hasStart && hasEnd) {
+          const s = mi.sourceStart as number
+          const e = mi.sourceEnd as number
+          if (s < 0 || e <= s || e > referencedInterview.originalText.length) {
+            return { success: false, error: '记忆卡片的原文范围无效。' }
+          }
+          const substring = referencedInterview.originalText.substring(s, e)
+          if (substring !== mi.originalText) {
+            return { success: false, error: '记忆卡片的原文与访谈截取内容不一致。' }
+          }
+        }
+      }
+    }
+
     // Check if project name already exists and handle duplicates
-    // Pattern: original, （导入副本）, （导入副本 2）, （导入副本 3）, ...
     let title = data.project.title
     let candidate = title
     let dupCount = 0
@@ -129,7 +202,7 @@ export const importExportService = {
       title,
       description: data.project.description ?? '',
       narratorId: newNarratorId,
-      schemaVersion: 2,
+      schemaVersion: 3,
       createdAt: data.project.createdAt,
       updatedAt: data.project.updatedAt,
     })
@@ -163,17 +236,19 @@ export const importExportService = {
     try {
       await db.transaction(
         'rw',
-        db.projects,
-        db.narrators,
-        db.consents,
-        db.interviews,
+        [db.projects, db.narrators, db.consents, db.interviews, db.memoryItems],
         async () => {
           await db.projects.add(project)
           await db.narrators.add(narrator)
           await db.consents.add(consent)
-          if (data.schemaVersion === 2 && data.interviews) {
+
+          // Map old interview IDs to new ones
+          const interviewIdMap = new Map<string, string>()
+
+          if ((data.schemaVersion === 2 || data.schemaVersion === 3) && data.interviews) {
             for (const srcIv of data.interviews) {
               const newIvId = crypto.randomUUID()
+              interviewIdMap.set(srcIv.id, newIvId)
               const newIv = createInterviewSession({
                 id: newIvId,
                 projectId: newProjectId,
@@ -189,10 +264,41 @@ export const importExportService = {
               await db.interviews.add(newIv)
             }
           }
+
+          // Import memory items for v3
+          if (data.schemaVersion === 3 && data.memoryItems) {
+            for (const srcMi of data.memoryItems as MemoryItem[]) {
+              const newMiId = crypto.randomUUID()
+              const newInterviewId = interviewIdMap.get(srcMi.interviewSessionId)
+              if (!newInterviewId) {
+                throw new Error('记忆卡片引用的访谈不存在。')
+              }
+              const newMi: MemoryItem = {
+                id: newMiId,
+                projectId: newProjectId,
+                interviewSessionId: newInterviewId,
+                sourceId: newInterviewId,
+                type: srcMi.type,
+                title: srcMi.title,
+                originalText: srcMi.originalText,
+                editedText: srcMi.editedText,
+                sourceStart: srcMi.sourceStart,
+                sourceEnd: srcMi.sourceEnd,
+                sourceType: srcMi.sourceType,
+                certainty: srcMi.certainty,
+                visibility: srcMi.visibility,
+                reviewStatus: srcMi.reviewStatus,
+                createdAt: srcMi.createdAt,
+                updatedAt: srcMi.updatedAt,
+              }
+              await db.memoryItems.add(newMi)
+            }
+          }
         },
       )
-    } catch {
-      return { success: false, error: '导入过程中发生错误，未保留任何部分数据。' }
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : '未知错误'
+      return { success: false, error: `导入过程中发生错误：${msg}。未保留任何部分数据。` }
     }
 
     return { success: true, projectId: newProjectId }

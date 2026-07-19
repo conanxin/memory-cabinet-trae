@@ -1,5 +1,8 @@
+// MANUAL_PATCH_FROM_DOCUMENT_CONTRACT
+// Added STORES_V3 with memoryItems table (DATA-MODEL.md §4.5)
+
 export const DB_NAME = 'memory-cabinet-v02'
-export const DB_VERSION = 2
+export const DB_VERSION = 3
 
 export const STORES_V1 = {
   projects: 'id, title, updatedAt',
@@ -12,4 +15,9 @@ export const STORES_V2 = {
   interviews: 'id, projectId, interviewDate, updatedAt',
 } as const
 
-export const STORES = STORES_V2
+export const STORES_V3 = {
+  ...STORES_V2,
+  memoryItems: 'id, projectId, interviewSessionId, type, reviewStatus, updatedAt',
+} as const
+
+export const STORES = STORES_V3
