@@ -125,7 +125,9 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('测试事件卡')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     await expect(page.locator('h1')).toContainText('测试事件卡')
   })
 
@@ -156,7 +158,9 @@ test.describe('R3C Memory Views', () => {
       await page.selectOption('#memory-type', types[i])
       await page.locator('#memory-title').fill('测试' + labels[i] + '卡')
       await page.locator('button', { hasText: '创建卡片' }).click()
-      await page.waitForURL(/memories\/[^new]/)
+      // Wait until we navigate away from the create page
+      await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+      await page.waitForLoadState('networkidle')
       await expect(page.locator('h1')).toContainText('测试' + labels[i] + '卡')
     }
   })
@@ -186,7 +190,9 @@ test.describe('R3C Memory Views', () => {
       await page.selectOption('#memory-type', type)
       await page.locator('#memory-title').fill('统计卡-' + type)
       await page.locator('button', { hasText: '创建卡片' }).click()
-      await page.waitForURL(/memories\/[^new]/)
+      // Wait until we navigate away from the create page
+      await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+      await page.waitForLoadState('networkidle')
     }
     // Go to project detail
     await page.goto('/#/projects/' + projectId)
@@ -217,7 +223,9 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('持久化测试卡')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     await page.reload()
     await expect(page.locator('h1')).toContainText('持久化测试卡')
   })
@@ -245,12 +253,16 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('原始标题')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     await page.locator('#memory-title').fill('修改后的标题')
     await page.locator('button', { hasText: '保存修改' }).click()
-    await page.waitForURL(/memories$/)
+    await page.waitForFunction(() => window.location.hash.match(/memories$/))
     await page.locator('.memory-card').first().click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     await expect(page.locator('#memory-title')).toHaveValue('修改后的标题')
   })
 
@@ -277,10 +289,12 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('待删除卡')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     await page.locator('button', { hasText: '删除卡片' }).click()
     await page.locator('button', { hasText: '确认删除' }).click()
-    await page.waitForURL(/memories$/)
+    await page.waitForFunction(() => window.location.hash.match(/memories$/))
     await expect(page.locator('.memory-card')).toHaveCount(0)
   })
 
@@ -307,7 +321,9 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('警告测试卡')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     // Go back to interview
     await page.goto('/#/projects/' + projectId + '/interviews/' + interviewId)
     await page.waitForLoadState('networkidle')
@@ -339,7 +355,9 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('级联测试卡')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     await page.goto('/#/projects/' + projectId + '/interviews/' + interviewId)
     await page.waitForLoadState('networkidle')
     await page.locator('button', { hasText: '删除本次访谈' }).click()
@@ -373,7 +391,9 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('<script>alert(1)</script>')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     await page.waitForTimeout(1000)
     expect(triggered).toBe(false)
   })
@@ -402,7 +422,9 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('关联卡1')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     // Go back to interview and check
     await page.goto('/#/projects/' + projectId + '/interviews/' + interviewId)
     await page.waitForLoadState('networkidle')
@@ -461,13 +483,17 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('draft转confirmed测试')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     // Change reviewStatus (5th select)
     await page.locator('select').nth(4).selectOption('confirmed')
     await page.locator('button', { hasText: '保存修改' }).click()
-    await page.waitForURL(/memories$/)
+    await page.waitForFunction(() => window.location.hash.match(/memories$/))
     await page.locator('.memory-card').first().click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     await expect(page.locator('select').nth(4)).toHaveValue('confirmed')
   })
 
@@ -493,19 +519,25 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('confirmed转excluded')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     // Set to confirmed first, save
     await page.locator('select').nth(4).selectOption('confirmed')
     await page.locator('button', { hasText: '保存修改' }).click()
-    await page.waitForURL(/memories$/)
+    await page.waitForFunction(() => window.location.hash.match(/memories$/))
     await page.locator('.memory-card').first().click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     // Now change to excluded
     await page.locator('select').nth(4).selectOption('excluded')
     await page.locator('button', { hasText: '保存修改' }).click()
-    await page.waitForURL(/memories$/)
+    await page.waitForFunction(() => window.location.hash.match(/memories$/))
     await page.locator('.memory-card').first().click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     await expect(page.locator('select').nth(4)).toHaveValue('excluded')
   })
 
@@ -531,12 +563,16 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('editedText编辑测试')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     await page.locator('#memory-edited-text').fill('这是经过人工整理修改后的文字内容')
     await page.locator('button', { hasText: '保存修改' }).click()
-    await page.waitForURL(/memories$/)
+    await page.waitForFunction(() => window.location.hash.match(/memories$/))
     await page.locator('.memory-card').first().click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     await expect(page.locator('#memory-edited-text')).toHaveValue('这是经过人工整理修改后的文字内容')
     await page.reload()
     await expect(page.locator('#memory-edited-text')).toHaveValue('这是经过人工整理修改后的文字内容')
@@ -564,10 +600,12 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('删除不影响访谈')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     await page.locator('button', { hasText: '删除卡片' }).click()
     await page.locator('button', { hasText: '确认删除' }).click()
-    await page.waitForURL(/memories$/)
+    await page.waitForFunction(() => window.location.hash.match(/memories$/))
     // Go back to interview, verify it still exists
     await page.goto('/#/projects/' + pid + '/interviews/' + iid)
     await page.waitForLoadState('networkidle')
@@ -598,7 +636,9 @@ test.describe('R3C Memory Views', () => {
       await page.selectOption('#memory-type', t)
       await page.locator('#memory-title').fill('访谈列表卡-' + t)
       await page.locator('button', { hasText: '创建卡片' }).click()
-      await page.waitForURL(/memories\/[^new]/)
+      // Wait until we navigate away from the create page
+      await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+      await page.waitForLoadState('networkidle')
     }
     // Go to interview and check
     await page.goto('/#/projects/' + pid + '/interviews/' + iid)
@@ -630,7 +670,9 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('Esc关闭测试')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     // Go back to interview and try delete
     await page.goto('/#/projects/' + pid + '/interviews/' + iid)
     await page.waitForLoadState('networkidle')
@@ -666,7 +708,9 @@ test.describe('R3C Memory Views', () => {
       await page.selectOption('#memory-type', t)
       await page.locator('#memory-title').fill('级联卡-' + t)
       await page.locator('button', { hasText: '创建卡片' }).click()
-      await page.waitForURL(/memories\/[^new]/)
+      // Wait until we navigate away from the create page
+      await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+      await page.waitForLoadState('networkidle')
     }
     // Delete interview
     await page.goto('/#/projects/' + pid + '/interviews/' + iid)
@@ -704,7 +748,9 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('访谈1卡片')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     // Create interview 2 with 1 card
     await page.goto('/#/projects/' + pid)
     await page.waitForLoadState('networkidle')
@@ -722,7 +768,9 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'person')
     await page.locator('#memory-title').fill('访谈2卡片')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     // Delete interview 1
     await page.goto('/#/projects/' + pid + '/interviews/' + iid1)
     await page.waitForLoadState('networkidle')
@@ -761,7 +809,9 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('XSS全面测试')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     await page.waitForTimeout(1500)
     expect(triggered).toBe(false)
   })
@@ -774,7 +824,7 @@ test.describe('R3C Memory Views', () => {
     await page.getByRole('button', { name: '创建项目' }).click()
     await page.waitForLoadState('networkidle')
     await page.getByRole('link', { name: '查看全部记忆卡片' }).click()
-    await page.waitForURL(/memories$/)
+    await page.waitForFunction(() => window.location.hash.match(/memories$/))
     await expect(page.locator('p', { hasText: '暂无记忆卡片' })).toBeVisible()
     await expect(page.locator('.memory-card')).toHaveCount(0)
   })
@@ -809,7 +859,9 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('无网络请求测试')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     expect(external).toEqual([])
   })
 
@@ -835,7 +887,9 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('元数据显示测试')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     // Check source range display (format: "3 - 17")
     await expect(page.locator('.info-row', { hasText: '原文范围' })).toContainText('3 - 17')
     // Check interview link
@@ -910,7 +964,9 @@ test.describe('R3C Memory Views', () => {
     await page.selectOption('#memory-type', 'event')
     await page.locator('#memory-title').fill('返回按钮测试')
     await page.locator('button', { hasText: '创建卡片' }).click()
-    await page.waitForURL(/memories\/[^new]/)
+    // Wait until we navigate away from the create page
+    await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
+    await page.waitForLoadState('networkidle')
     // Return to interview
     await page.locator('a', { hasText: '返回访谈' }).click()
     await page.waitForURL(/interviews\//)
@@ -948,13 +1004,14 @@ test.describe('R3C Memory Views', () => {
       await page.selectOption('#memory-type', type)
       await page.locator('#memory-title').fill('六类-' + label)
       await page.locator('button', { hasText: '创建卡片' }).click()
-      await page.waitForURL(/memories\/[^new]/)
+      // Wait until we navigate away from the create page
+      await page.waitForFunction(() => !window.location.hash.includes('/memories/new'))
       await page.waitForLoadState('networkidle')
       await expect(page.locator('h1')).toContainText('六类-' + label)
     }
     // Check list shows 6
     await page.goto('/#/projects/' + pid + '/memories')
-    await page.waitForURL(/memories$/)
+    await page.waitForFunction(() => window.location.hash.match(/memories$/))
     await expect(page.locator('.memory-card')).toHaveCount(6)
   })
 
